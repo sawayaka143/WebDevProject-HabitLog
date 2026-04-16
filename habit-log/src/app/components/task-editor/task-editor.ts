@@ -18,6 +18,7 @@ interface StructLine {
   selector: 'app-task-editor',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  preserveWhitespaces: true,
   template: `
     @if (task(); as t) {
       <div class="editor-wrap" (click)="focusEditor()">
@@ -45,19 +46,19 @@ interface StructLine {
           <div class="code-line">
             <span class="ln">3</span>
             <span class="kw">typedef</span>
-            <span class="txt"> </span>
+            <span class="txt">&nbsp;</span>
             <span class="kw">struct</span>
-            <span class="txt"> &#123;</span>
+            <span class="txt">&nbsp;&#123;</span>
           </div>
 
           <!-- title -->
           <div class="code-line">
             <span class="ln">4</span>
-            <span class="indent">    </span>
-            <span class="type">char*&nbsp;</span>
-            <span class="txt">   </span>
+            <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="type">char*</span>
+            <span class="txt">&nbsp;&nbsp;</span>
             <span class="field">title</span>
-            <span class="txt">       = </span>
+            <span class="txt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span>
             <span class="str">"{{ t.title }}"</span>
             <span class="punct">;</span>
           </div>
@@ -65,11 +66,11 @@ interface StructLine {
           <!-- status — editable -->
           <div class="code-line editable-line" (click)="startEdit('status', $event)">
             <span class="ln">5</span>
-            <span class="indent">    </span>
-            <span class="type">char*&nbsp;</span>
-            <span class="txt">   </span>
+            <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="type">char*</span>
+            <span class="txt">&nbsp;&nbsp;</span>
             <span class="field">status</span>
-            <span class="txt">      = </span>
+            <span class="txt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span>
             @if (editingField() === 'status') {
               <span class="str edit-wrap">"<input
                 class="inline-input"
@@ -84,7 +85,7 @@ interface StructLine {
               <span class="str" [class.done-val]="t.status === 'done'">"{{ t.status }}"</span>
             }
             <span class="punct">;</span>
-            <span class="comment">        // pending | done</span>
+            <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// pending | done</span>
             @if (savedField() === 'status') {
               <span class="saved-flash"> // saved</span>
             }
@@ -93,11 +94,11 @@ interface StructLine {
           <!-- tag -->
           <div class="code-line editable-line" (click)="startEditTag($event)">
             <span class="ln">6</span>
-            <span class="indent">    </span>
-            <span class="type">char*&nbsp;</span>
-            <span class="txt">   </span>
+            <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="type">char*</span>
+            <span class="txt">&nbsp;&nbsp;</span>
             <span class="field">tag</span>
-            <span class="txt">         = </span>
+            <span class="txt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span>
             @if (editingField() === 'tag') {
               <span class="str edit-wrap">"<select
                 class="inline-select"
@@ -115,7 +116,7 @@ interface StructLine {
               <span class="str tag-val" [ngClass]="'tag-' + t.tag">"{{ t.tag }}"</span>
             }
             <span class="punct">;</span>
-            <span class="comment">           // work | personal | health</span>
+            <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// work | personal | health</span>
             @if (savedField() === 'tag') {
               <span class="saved-flash"> // saved</span>
             }
@@ -124,24 +125,24 @@ interface StructLine {
           <!-- created_at -->
           <div class="code-line">
             <span class="ln">7</span>
-            <span class="indent">    </span>
-            <span class="type">char*&nbsp;</span>
-            <span class="txt">   </span>
+            <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="type">char*</span>
+            <span class="txt">&nbsp;&nbsp;</span>
             <span class="field">created_at</span>
-            <span class="txt">  = </span>
+            <span class="txt">&nbsp;&nbsp;=&nbsp;</span>
             <span class="str">"{{ t.created_at }}"</span>
             <span class="punct">;</span>
           </div>
 
           <!-- description — editable -->
           @if (editingField() === 'description') {
-            <div class="code-line editable-line" (click)="startEdit('description', $event)">
+            <div class="code-line desc-line editable-line" (click)="startEdit('description', $event)">
               <span class="ln">8</span>
-              <span class="indent">    </span>
-              <span class="type">char*&nbsp;</span>
-              <span class="txt">   </span>
+              <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span class="type">char*</span>
+              <span class="txt">&nbsp;&nbsp;</span>
               <span class="field">description</span>
-              <span class="txt"> = </span>
+              <span class="txt">&nbsp;=&nbsp;</span>
               <span class="str edit-wrap">"<textarea
                 class="inline-input desc-textarea"
                 [value]="editValue()"
@@ -158,14 +159,14 @@ interface StructLine {
               <div class="code-line editable-line" (click)="startEdit('description', $event)">
                 <span class="ln">{{ 8 + i }}</span>
                 @if (first) {
-                  <span class="indent">    </span>
-                  <span class="type">char*&nbsp;</span>
-                  <span class="txt">   </span>
+                  <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <span class="type">char*</span>
+                  <span class="txt">&nbsp;&nbsp;</span>
                   <span class="field">description</span>
-                  <span class="txt"> = </span>
+                  <span class="txt">&nbsp;=&nbsp;</span>
                   <span class="str">"</span>
                 } @else {
-                  <span class="txt">                           </span> <!-- 27 spaces -->
+                  <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 }
 
                 <span class="str">{{ seg }}</span>
@@ -173,7 +174,7 @@ interface StructLine {
                 @if (last) {
                   <span class="str">"</span>
                   <span class="punct">;</span>
-                  <span class="comment">  // editable</span>
+                  <span class="comment">&nbsp;&nbsp;// editable</span>
                   @if (savedField() === 'description') {
                     <span class="saved-flash"> // saved</span>
                   }
@@ -185,7 +186,7 @@ interface StructLine {
           <!-- closing brace -->
           <div class="code-line">
             <span class="ln">{{ lastLineNo() + 1 }}</span>
-            <span class="txt">&#125; </span>
+            <span class="txt">&#125;&nbsp;</span>
             <span class="type">Task</span>
             <span class="punct">;</span>
           </div>
@@ -229,6 +230,8 @@ interface StructLine {
       flex-direction: column;
       height: 100%;
       background: var(--bg-primary);
+      /* Prevent any child from causing layout shift of the whole wrap */
+      overflow: hidden;
     }
 
     .breadcrumb {
@@ -253,14 +256,32 @@ interface StructLine {
       display: flex;
       flex-direction: column;
       gap: 2px;
+      /* Anchor scroll to top so content doesn't drift when textarea grows */
+      overflow-anchor: none;
     }
 
     .code-line {
       display: flex;
-      align-items: center;
+      /* CHANGED: align to top so tall children (like textarea) don't push siblings to center */
+      align-items: flex-start;
       min-height: 22px;
       gap: 0;
       animation: fadeSlideIn 0.15s ease-out;
+    }
+
+    /* For the description edit line specifically: pin children to the top */
+    .desc-line {
+      align-items: flex-start;
+    }
+    .desc-line .ln,
+    .desc-line .indent,
+    .desc-line .type,
+    .desc-line .field,
+    .desc-line .txt,
+    .desc-line .punct {
+      /* Align small spans with the first line of the textarea */
+      line-height: 22px;
+      padding-top: 0;
     }
 
     .editable-line {
@@ -282,12 +303,13 @@ interface StructLine {
       font-size: 12px;
       flex-shrink: 0;
       user-select: none;
+      line-height: 22px;
     }
     .code-line:hover .ln {
       color: var(--text-secondary);
     }
 
-    .indent { white-space: pre; }
+    .indent { white-space: pre; flex-shrink: 0; }
 
     /* Syntax colours */
     .kw      { color: var(--accent-purple); }
@@ -308,7 +330,7 @@ interface StructLine {
     /* Inline edit */
     .edit-wrap {
       display: inline-flex;
-      align-items: center;
+      align-items: flex-start;  /* CHANGED: top-align the quotes with the textarea */
       color: #a8d686;
     }
     .inline-input {
@@ -335,13 +357,18 @@ interface StructLine {
 
     .desc-input { min-width: 300px; }
     .desc-textarea {
-      min-width: 380px;
-      min-height: 48px;
-      resize: vertical;
+      /* FIXED SIZE — no user resize, no content-driven growth that moves siblings */
+      width: 480px;
+      height: 120px;
+      min-width: 480px;
+      min-height: 120px;
+      max-width: 480px;
+      max-height: 120px;
+      resize: none;              /* CHANGED: prevent user dragging = no window shift */
       vertical-align: top;
-      margin-top: -2px;
       line-height: 1.5;
-      overflow-y: hidden;
+      overflow-y: auto;          /* CHANGED: scroll inside textarea instead of growing */
+      box-sizing: border-box;
     }
     .desc-textarea:focus,
     .desc-textarea:focus-visible,
@@ -349,6 +376,7 @@ interface StructLine {
       outline: none !important;
       box-shadow: none !important;
       border: none !important;
+      border-bottom: 1px solid var(--accent-green) !important;
       background: transparent;
     }
     
@@ -418,8 +446,8 @@ export class TaskEditorComponent {
   state = inject(IdeStateService);
 
   editingField = signal<string | null>(null);
-  editValue    = signal<string>('');
-  savedField   = signal<string | null>(null);
+  editValue = signal<string>('');
+  savedField = signal<string | null>(null);
 
   task = computed<Task | null>(() => {
     const id = this.state.activeTabId();
@@ -448,7 +476,7 @@ export class TaskEditorComponent {
     }
   }
 
-  focusEditor() {}
+  focusEditor() { }
 
   startEdit(field: string, event: MouseEvent) {
     event.stopPropagation();
@@ -501,7 +529,6 @@ export class TaskEditorComponent {
       }
       patch.status = (val === 'done' ? 'done' : 'pending');
     } else if (field === 'description') {
-      // Split by literal \n, trim segments, and filter out empties
       const parts = this.editValue()
         .split('\\n')
         .map(p => p.trim())
