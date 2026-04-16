@@ -1,101 +1,97 @@
-/* Retrowave IDE Global Styles */
-
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+/* ─── Retrowave VS Code IDE — Global Styles ─── */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-primary: #0d1117;
+  --bg-primary:   #0d1117;
   --bg-secondary: #161b22;
-  --bg-tertiary: #21262d;
-  
-  --text-primary: #c9d1d9;
+  --bg-tertiary:  #21262d;
+  --bg-hover:     #1c2128;
+
+  --text-primary:   #c9d1d9;
   --text-secondary: #8b949e;
-  --text-muted: #484f58;
-  
-  --accent-green: #39ff14;
-  --accent-amber: #ffb000;
-  --danger: #ff5555;
-  --blue: #58a6ff;
-  
+  --text-muted:     #484f58;
+
+  --accent-green:  #39ff14;
+  --accent-amber:  #ffb347;
+  --accent-blue:   #58a6ff;
+  --accent-purple: #bc8cff;
+  --accent-red:    #ff5555;
+
   --border-color: #30363d;
-  --border-radius: 0px; 
-  
-  --font-mono: 'Share Tech Mono', monospace;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: var(--font-mono);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.5;
-  min-height: 100vh;
-  overflow: hidden; /* App takes exactly 100vh, no scroll */
-}
-
-a {
-  color: var(--blue);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Custom Scrollbar for IDE feel */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   background: var(--bg-primary);
-  border-left: 1px solid var(--border-color);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-/* Blinking Cursor Utility */
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-color); }
+::selection { background: rgba(88, 166, 255, 0.25); }
+
+/* ── Animations ── */
 @keyframes blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  50%       { opacity: 0; }
 }
-.cursor-blink {
-  animation: blink 1s step-end infinite;
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+@keyframes savedFlash {
+  0%   { color: var(--accent-green); }
+  80%  { color: var(--accent-green); }
+  100% { color: var(--text-muted);   }
 }
 
-/* Base button and input styling matching IDE theme */
+.cursor-blink { animation: blink 1s step-end infinite; }
+.fade-in      { animation: fadeSlideIn 0.15s ease-out; }
+
+/* ── Base Resets ── */
 button {
   font-family: var(--font-mono);
+  font-size: 12px;
   cursor: pointer;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
+  background: transparent;
+  color: var(--text-secondary);
   border: 1px solid var(--border-color);
-  padding: 4px 12px;
-  transition: all 0.2s;
+  padding: 3px 10px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1.4;
 }
-
 button:hover {
-  background: var(--border-color);
-  border-color: var(--text-secondary);
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--text-muted);
 }
 
-input, select {
+input, textarea, select {
   font-family: var(--font-mono);
+  font-size: 13px;
   background: var(--bg-primary);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
   padding: 4px 8px;
-}
-
-input:focus, select:focus {
   outline: none;
+  caret-color: var(--accent-green);
+}
+input:focus, textarea:focus, select:focus {
   border-color: var(--accent-green);
+  box-shadow: 0 0 0 1px rgba(57, 255, 20, 0.15);
 }

@@ -1,153 +1,181 @@
+/* ─── App Root Layout ─── */
 :host {
   display: grid;
-  grid-template-rows: 32px 1fr 24px;
-  grid-template-columns: 200px 1fr;
+  grid-template-rows: 32px 1fr 22px;
   grid-template-areas:
-    "title title"
-    "sidebar main"
-    "status status";
+    "title"
+    "body"
+    "status";
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 }
 
+/* ── Title Bar ── */
 .ide-title-bar {
   grid-area: title;
   display: flex;
   align-items: center;
-  background-color: var(--bg-secondary);
+  background: #1a1f28;
   border-bottom: 1px solid var(--border-color);
-  padding: 0 16px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  position: relative;
+  padding: 0 12px;
+  gap: 12px;
+  user-select: none;
 }
 
 .traffic-lights {
   display: flex;
-  gap: 8px;
+  gap: 7px;
+  flex-shrink: 0;
 }
-
 .dot {
-  width: 12px; height: 12px; border-radius: 50%;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: filter 0.15s;
 }
-.dot.red { background-color: #ff5f56; }
-.dot.yellow { background-color: #ffbd2e; }
-.dot.green { background-color: #27c93f; }
+.dot:hover { filter: brightness(1.3); }
+.dot.red    { background: #ff5f57; }
+.dot.yellow { background: #febc2e; }
+.dot.green  { background: #28c840; }
 
 .title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.ide-sidebar {
-  grid-area: sidebar;
-  background-color: var(--bg-tertiary);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-header {
-  font-size: 11px;
-  padding: 8px 16px;
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
   color: var(--text-muted);
-  letter-spacing: 1px;
+  letter-spacing: 0.2px;
 }
 
-.file-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.file-item {
-  padding: 4px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  color: var(--text-secondary);
+.title-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.branch-icon { color: var(--accent-blue); }
+.branch-name { color: var(--text-secondary); }
+
+/* ── IDE Body ── */
+.ide-body {
+  grid-area: body;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-areas: "sidebar main";
+  overflow: hidden;
 }
 
-.file-item:hover {
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+/* ── Sidebar ── */
+.ide-sidebar {
+  grid-area: sidebar;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.file-item.active {
-  background-color: var(--bg-primary);
-  color: var(--accent-green);
-  border-left: 2px solid var(--accent-green);
-  padding-left: 14px;
-}
-
+/* ── Main (tabs + editor + terminal) ── */
 .ide-main {
   grid-area: main;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-primary);
   overflow: hidden;
+  background: var(--bg-primary);
 }
 
-.ide-tabs {
+/* ── Editor Area ── */
+.ide-editor {
+  flex: 1;
+  overflow: hidden;
   display: flex;
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
+  flex-direction: column;
+  min-height: 0;
 }
 
-.ide-tab {
-  padding: 8px 16px;
-  color: var(--text-secondary);
-  background-color: transparent;
-  border: none;
-  border-right: 1px solid var(--border-color);
-  cursor: pointer;
-  font-size: 14px;
-  outline: none;
-}
-.ide-tab:hover {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-.ide-tab.active {
-  background-color: var(--bg-primary);
-  color: var(--accent-green);
-  border-top: 2px solid var(--accent-green);
-  border-bottom: 1px solid var(--bg-primary);
-  margin-bottom: -1px;
+.fill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.ide-content {
+.editor-content-wrap {
   flex: 1;
   overflow: auto;
-  padding: 16px;
+  padding: 20px 24px;
 }
 
+/* ── Welcome Screen ── */
+.welcome-screen {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.welcome-art {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wa-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent-green);
+  text-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+  letter-spacing: 2px;
+}
+.wa-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.wa-divider {
+  color: var(--border-color);
+  font-size: 13px;
+  margin: 4px 0;
+}
+.wa-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 10px;
+}
+.hint-key {
+  color: var(--accent-amber);
+  min-width: 120px;
+}
+.hint-cmd {
+  color: var(--accent-green);
+  font-family: var(--font-mono);
+}
+
+/* ── Status Bar ── */
 .ide-status-bar {
   grid-area: status;
-  background-color: var(--accent-green);
-  color: var(--bg-primary);
+  background: #1a3a5c;
+  color: var(--accent-blue);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  font-size: 12px;
-  font-weight: bold;
+  padding: 0 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  flex-shrink: 0;
+  user-select: none;
+  gap: 8px;
 }
 
-.sb-left {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.spacer {
-  color: rgba(0,0,0,0.3);
-}
-
-.sb-right {
+.sb-left, .sb-right {
   display: flex;
   align-items: center;
+  gap: 6px;
 }
+.sb-item {
+  white-space: nowrap;
+  padding: 0 3px;
+}
+.sb-item:hover {
+  background: rgba(255,255,255,0.08);
+}
+.sb-sep   { opacity: 0.3; }
+.sb-green { color: var(--accent-green); }
