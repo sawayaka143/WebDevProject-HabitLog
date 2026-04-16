@@ -1,4 +1,64 @@
-<app-nav-bar></app-nav-bar>
-<main>
-  <router-outlet></router-outlet>
-</main>
+<div class="ide-title-bar">
+  <div class="traffic-lights">
+    <div class="dot red"></div>
+    <div class="dot yellow"></div>
+    <div class="dot green"></div>
+  </div>
+  <div class="title-text">PRODUCTIVITY_SUITE v2.1.0 — workspace/main.pro</div>
+</div>
+
+<div class="ide-sidebar">
+  <div class="sidebar-header">EXPLORER</div>
+  <ul class="file-list">
+    @for (filter of filters; track filter) {
+      <li 
+        class="file-item" 
+        [class.active]="state.activeFilter() === filter"
+        (click)="state.setFilter(filter)"
+      >
+        <span class="file-icon">⚲</span> {{filter}}
+      </li>
+    }
+  </ul>
+</div>
+
+<div class="ide-main">
+  <div class="ide-tabs">
+    @for (tab of tabs; track tab) {
+      <button 
+        class="ide-tab" 
+        [class.active]="state.activeTab() === tab"
+        (click)="state.setTab(tab)"
+      >
+        {{tab}}
+      </button>
+    }
+  </div>
+  
+  <div class="ide-content">
+    @switch (state.activeTab()) {
+      @case ('todos.c') {
+        <app-todos-tab></app-todos-tab>
+      }
+      @case ('habits.h') {
+        <app-habits-tab></app-habits-tab>
+      }
+      @case ('dashboard.log') {
+        <app-dashboard-tab></app-dashboard-tab>
+      }
+    }
+  </div>
+</div>
+
+<div class="ide-status-bar">
+  <div class="sb-left">
+    <span>TODOS: {{state.completedTodos()}}/{{state.totalTodos()}}</span>
+    <span class="spacer">|</span>
+    <span>HABITS: {{state.totalHabits()}}</span>
+    <span class="spacer">|</span>
+    <span>STREAK: {{state.totalActiveStreak()}}d</span>
+  </div>
+  <div class="sb-right">
+    <span class="cursor-blink">█</span>
+  </div>
+</div>

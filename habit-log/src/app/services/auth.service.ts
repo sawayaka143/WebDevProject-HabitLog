@@ -12,19 +12,18 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  // Use Angular 17+ signals for reactive state
   currentUser = signal<User | null>(null);
 
   constructor() {
-    // Mock check for existing token in localStorage
-    const savedUser = localStorage.getItem('habitlog_user');
-    if (savedUser) {
-      this.currentUser.set(JSON.parse(savedUser));
+    if (typeof localStorage !== 'undefined') {
+      const savedUser = localStorage.getItem('habitlog_user');
+      if (savedUser) {
+        this.currentUser.set(JSON.parse(savedUser));
+      }
     }
   }
 
   login(username: string) {
-    // Mock login logic
     const mockUser: User = {
       id: 1,
       username: username,
@@ -33,12 +32,16 @@ export class AuthService {
       level: 12
     };
     this.currentUser.set(mockUser);
-    localStorage.setItem('habitlog_user', JSON.stringify(mockUser));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('habitlog_user', JSON.stringify(mockUser));
+    }
   }
 
   logout() {
     this.currentUser.set(null);
-    localStorage.removeItem('habitlog_user');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('habitlog_user');
+    }
   }
 
   isAuthenticated(): boolean {

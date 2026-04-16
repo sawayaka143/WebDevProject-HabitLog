@@ -5,6 +5,8 @@ export interface Category {
   name: string;
 }
 
+export type TargetDate = 'Today' | 'Tomorrow' | 'Next Week' | 'Next Month';
+
 export interface Habit {
   id: number;
   title: string;
@@ -12,6 +14,7 @@ export interface Habit {
   categoryId: number;
   completedToday: boolean;
   streak: number;
+  targetDate: TargetDate;
 }
 
 @Injectable({
@@ -25,9 +28,10 @@ export class HabitService {
   ]);
 
   habits = signal<Habit[]>([
-    { id: 1, title: 'Morning Jog', description: 'Run for 30 mins', categoryId: 1, completedToday: false, streak: 5 },
-    { id: 2, title: 'Read a Book', description: 'Read 20 pages', categoryId: 3, completedToday: true, streak: 12 },
-    { id: 3, title: 'Code Practice', description: 'Solve 2 LeetCode problems', categoryId: 2, completedToday: false, streak: 1 }
+    { id: 1, title: 'Morning Jog', description: 'Run for 30 mins', categoryId: 1, completedToday: false, streak: 5, targetDate: 'Today' },
+    { id: 2, title: 'Read a Book', description: 'Read 20 pages', categoryId: 3, completedToday: true, streak: 12, targetDate: 'Today' },
+    { id: 3, title: 'Code Practice', description: 'Solve 2 LeetCode problems', categoryId: 2, completedToday: false, streak: 1, targetDate: 'Tomorrow' },
+    { id: 4, title: 'Grocery Shopping', description: 'Buy fruits and vegetables', categoryId: 1, completedToday: false, streak: 0, targetDate: 'Next Week' }
   ]);
 
   totalXp = signal<number>(1540);
