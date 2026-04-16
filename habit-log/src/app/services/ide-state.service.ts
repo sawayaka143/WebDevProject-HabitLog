@@ -5,7 +5,7 @@ export type FilterType = 'all_tasks' | 'work' | 'personal' | 'health' | 'pending
 
 export interface Task {
   id: string;
-  filename: string;       // e.g. fix_auth_leak.c
+  filename: string;       // e.g. fix_auth_leak.task
   title: string;          // e.g. Fix auth leak
   status: 'pending' | 'done';
   tag: TagType;
@@ -53,7 +53,7 @@ export class IdeStateService {
   tasks = signal<Task[]>([
     {
       id: '1',
-      filename: 'initialize_repository.c',
+      filename: 'initialize_repository.task',
       title: 'Initialize repository',
       status: 'done',
       tag: 'work',
@@ -62,7 +62,7 @@ export class IdeStateService {
     },
     {
       id: '2',
-      filename: 'drink_water.c',
+      filename: 'drink_water.task',
       title: 'Drink water',
       status: 'pending',
       tag: 'health',
@@ -71,7 +71,7 @@ export class IdeStateService {
     },
     {
       id: '3',
-      filename: 'read_documentation.c',
+      filename: 'read_documentation.task',
       title: 'Read documentation',
       status: 'pending',
       tag: 'personal',
@@ -172,7 +172,7 @@ export class IdeStateService {
 
   // ───────── TASK ACTIONS ─────────
   createTask(title: string): Task {
-    const filename = toSnakeCase(title) + '.c';
+    const filename = toSnakeCase(title) + '.task';
     const today = new Date().toISOString().split('T')[0];
     const newTask: Task = {
       id: Date.now().toString(),
@@ -294,7 +294,7 @@ export class IdeStateService {
           this.addTerminalLine('error', '> usage: done <filename>');
           break;
         }
-        const fn = filename.endsWith('.c') ? filename : filename + '.c';
+        const fn = filename.endsWith('.task') ? filename : filename + '.task';
         const ok = this.markTaskDone(fn);
         if (ok) {
           this.addTerminalLine('success', `> marked ${fn} as done`);
@@ -309,7 +309,7 @@ export class IdeStateService {
           this.addTerminalLine('error', '> usage: rm <filename>');
           break;
         }
-        const fn = filename.endsWith('.c') ? filename : filename + '.c';
+        const fn = filename.endsWith('.task') ? filename : filename + '.task';
         const ok = this.deleteTask(fn);
         if (ok) {
           this.addTerminalLine('success', `> deleted ${fn}`);

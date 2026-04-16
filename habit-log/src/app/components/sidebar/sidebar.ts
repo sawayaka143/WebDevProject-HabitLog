@@ -34,7 +34,7 @@ import { IdeStateService, Task } from '../../services/ide-state.service';
             (click)="openTask(task)"
           >
             <span class="file-indent"></span>
-            <span class="file-type-icon c-icon">C</span>
+            <span class="file-type-icon task-icon">T</span>
             <span class="file-name" [class.done-file]="task.status === 'done'">{{ task.filename }}</span>
             @if (state.isDirty(task.filename)) {
               <span class="dirty-dot" title="Unsaved changes">●</span>
@@ -191,7 +191,7 @@ import { IdeStateService, Task } from '../../services/ide-state.service';
       flex-shrink: 0;
       letter-spacing: 0;
     }
-    .c-icon   { background: #1c4a6e; color: var(--accent-blue); }
+    .task-icon { background: #6e3a1c; color: #ff9d00; }
     .h-icon   { background: #3a2f1a; color: var(--accent-amber); }
     .log-icon { background: #1e301e; color: var(--accent-green); font-size: 7px; }
 

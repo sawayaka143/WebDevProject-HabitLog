@@ -86,7 +86,7 @@ import { IdeStateService, OpenTab } from '../../services/ide-state.service';
       flex-shrink: 0;
       letter-spacing: 0;
     }
-    .icon-c   { background: #1c4a6e; color: var(--accent-blue); }
+    .icon-task { background: #6e3a1c; color: #ff9d00; }
     .icon-h   { background: #3a2f1a; color: var(--accent-amber); }
     .icon-log { background: #1e301e; color: var(--accent-green); font-size: 7px; }
 
@@ -142,14 +142,14 @@ export class TabBarComponent {
   state = inject(IdeStateService);
 
   getIconClass(tab: OpenTab): string {
-    if (tab.type === 'task')      return 'icon-c';
+    if (tab.type === 'task')      return 'icon-task';
     if (tab.type === 'habits')    return 'icon-h';
     if (tab.type === 'dashboard') return 'icon-log';
     return '';
   }
 
   getIconLabel(tab: OpenTab): string {
-    if (tab.type === 'task')      return 'C';
+    if (tab.type === 'task')      return 'T';
     if (tab.type === 'habits')    return 'H';
     if (tab.type === 'dashboard') return 'LOG';
     return '?';

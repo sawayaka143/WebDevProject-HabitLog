@@ -451,7 +451,7 @@ export class TaskEditorComponent {
 
   task = computed<Task | null>(() => {
     const id = this.state.activeTabId();
-    if (!id || !id.endsWith('.c')) return null;
+    if (!id || !id.endsWith('.task')) return null;
     return this.state.getTaskByFilename(id) ?? null;
   });
 
