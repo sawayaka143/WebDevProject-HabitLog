@@ -134,79 +134,35 @@ interface StructLine {
           </div>
 
           <!-- description — editable -->
-          @if (editingField() === 'description') {
-            <div class="code-line editable-line" (click)="startEdit('description', $event)">
-              <span class="ln">8</span>
-              <span class="indent">    </span>
-              <span class="type">char*&nbsp;</span>
-              <span class="txt">   </span>
-              <span class="field">description</span>
-              <span class="txt"> = </span>
-              <span class="str edit-wrap">"<textarea
-                class="inline-input desc-textarea"
-                [value]="editValue()"
-                (input)="onInput($event)"
-                (keydown.escape)="cancelEdit()"
-                (blur)="saveEdit()"
-                placeholder="use \\n for new lines"
-                autoFocus
-              ></textarea>"</span>
-              <span class="punct">;</span>
-            </div>
-          } @else {
-            @if (descriptionSegments().length > 0) {
-              @for (seg of descriptionSegments(); track $index; let i = $index, last = $last) {
-                <div class="code-line editable-line" (click)="startEdit('description', $event)">
-                  <span class="ln">{{ 8 + i }}</span>
-                  @if (i === 0) {
-                    <span class="indent">    </span>
-                    <span class="type">char*&nbsp;</span>
-                    <span class="txt">   </span>
-                    <span class="field">description</span>
-                    <span class="txt"> = </span>
-                  } @else {
-                    <span class="continuation-indent"></span>
-                  }
-                  <span class="str desc-val">"{{ seg }}{{ !last ? '\\n' : '' }}"</span>
-                  @if (last) { <span class="punct">;</span> }
-                  @if (i === 0) {
-                    <span class="comment">  // editable</span>
-                    @if (savedField() === 'description') {
-                      <span class="saved-flash"> // saved</span>
-                    }
-                  }
-                </div>
+          <div class="code-line editable-line description-line" (click)="startEdit('description', $event)">
+            <span class="ln">8</span>
+            <div class="desc-wrapper">
+              <span class="indent">    </span><span class="type">char*&nbsp;</span><span class="txt">   </span><span class="field">description</span><span class="txt"> = </span>@if (editingField() === 'description') {<span class="str edit-wrap">"<textarea
+                  class="inline-input desc-textarea"
+                  [value]="editValue()"
+                  (input)="onInput($event)"
+                  (keydown.escape)="cancelEdit()"
+                  (blur)="saveEdit()"
+                  placeholder="use \\n for new lines"
+                  autoFocus
+                ></textarea>"</span><span class="punct">;</span>
+              } @else {<span class="str desc-val">"{{ formattedDescription() }}"</span><span class="punct">;</span><span class="comment">  // editable</span>@if (savedField() === 'description') {<span class="saved-flash"> // saved</span>}
               }
-            } @else {
-              <div class="code-line editable-line" (click)="startEdit('description', $event)">
-                <span class="ln">8</span>
-                <span class="indent">    </span>
-                <span class="type">char*&nbsp;</span>
-                <span class="txt">   </span>
-                <span class="field">description</span>
-                <span class="txt"> = </span>
-                <span class="str desc-val">"[click to edit]"</span>
-                <span class="punct">;</span>
-                <span class="comment">  // editable</span>
-                @if (savedField() === 'description') {
-                  <span class="saved-flash"> // saved</span>
-                }
-              </div>
-            }
-          }
+            </div>
+          </div>
 
           <!-- closing brace -->
           <div class="code-line">
-            <span class="ln">{{ lastLineNo() + 1 }}</span>
+            <span class="ln">9</span>
             <span class="txt">&#125; </span>
             <span class="type">Task</span>
             <span class="punct">;</span>
           </div>
 
           <!-- blank + hint -->
-          <div class="code-line"><span class="ln">{{ lastLineNo() + 2 }}</span></div>
+          <div class="code-line"><span class="ln">10</span></div>
           <div class="code-line">
-            <span class="ln">{{ lastLineNo() + 3 }}</span>
+            <span class="ln">11</span>
             <span class="comment">// Click a field value to edit · Press Enter or Ctrl+S to save</span>
           </div>
         </div>
@@ -348,9 +304,20 @@ interface StructLine {
       line-height: 1.5;
       overflow-y: hidden;
     }
-    .continuation-indent {
-      display: inline-block;
-      width: 27ch; /* precisely matches standard struct indent chars */
+    .description-line {
+      align-items: flex-start;
+    }
+    .description-line .ln {
+      line-height: 22px;
+    }
+    .desc-wrapper {
+      flex: 1;
+      padding-left: 27ch;
+      text-indent: -27ch;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 22px;
+      font-family: var(--font-mono);
     }
     .inline-select {
       background: var(--bg-secondary);
@@ -421,18 +388,10 @@ export class TaskEditorComponent {
     return this.state.getTaskByFilename(id) ?? null;
   });
 
-  descriptionSegments = computed<string[]>(() => {
+  formattedDescription = computed(() => {
     const t = this.task();
-    if (!t || !t.description) return [];
-    return t.description.split('\\n');
-  });
-
-  lastLineNo = computed<number>(() => {
-    const segs = this.descriptionSegments();
-    // Default 1 line, meaning the field takes 1 line.
-    // If it has N segments, it takes N lines.
-    const extraLines = Math.max(0, segs.length - 1);
-    return 8 + extraLines; // 8 is the line where description starts
+    if (!t || !t.description) return '[click to edit]';
+    return t.description.split('\\n').join('\n');
   });
 
   @HostListener('window:keydown', ['$event'])
