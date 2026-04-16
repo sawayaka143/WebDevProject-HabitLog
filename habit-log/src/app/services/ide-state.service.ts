@@ -341,8 +341,12 @@ export class IdeStateService {
     }
   }
 
-  private addTerminalLine(type: TerminalLine['type'], text: string) {
+  addTerminalLine(type: TerminalLine['type'], text: string) {
     this.terminalHistory.update(h => [...h, { type, text }]);
+  }
+
+  ensureTerminalOpen() {
+    this.terminalCollapsed.set(false);
   }
 
   toggleTerminal() {

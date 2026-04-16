@@ -491,6 +491,14 @@ export class TaskEditorComponent {
     const patch: Partial<Task> = {};
 
     if (field === 'status') {
+      if (val !== 'pending' && val !== 'done') {
+        this.state.addTerminalLine('error', `> error: invalid value "${val}" for field 'status'`);
+        this.state.addTerminalLine('error', `> expected: "pending" | "done"`);
+        this.state.addTerminalLine('error', `> change discarded`);
+        this.state.ensureTerminalOpen();
+        this.cancelEdit();
+        return;
+      }
       patch.status = (val === 'done' ? 'done' : 'pending');
     } else if (field === 'description') {
       // Split by literal \n, trim segments, and filter out empties
