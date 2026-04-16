@@ -11,7 +11,14 @@ import { IdeStateService } from '../../services/ide-state.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="terminal-shell" [class.collapsed]="state.terminalCollapsed()">
+    <div class="terminal-shell" 
+      [class.collapsed]="state.terminalCollapsed()"
+      [style.height.px]="state.terminalCollapsed() ? 32 : terminalHeight()">
+
+      <!-- Resize Handle -->
+      @if (!state.terminalCollapsed()) {
+        <div class="resize-handle" (mousedown)="startResizing($event)"></div>
+      }
 
       <!-- Terminal header bar -->
       <div class="term-header" (click)="state.toggleTerminal()">
@@ -61,16 +68,31 @@ import { IdeStateService } from '../../services/ide-state.service';
   `,
   styles: [`
     .terminal-shell {
+      position: relative;
       display: flex;
       flex-direction: column;
       background: var(--bg-primary);
       border-top: 1px solid var(--border-color);
       flex-shrink: 0;
-      transition: height 0.15s ease;
-      height: 220px;
+      transition: height 0.05s linear;
     }
     .terminal-shell.collapsed {
-      height: 32px;
+      height: 32px !important;
+    }
+
+    .resize-handle {
+      position: absolute;
+      top: -3px;
+      left: 0;
+      right: 0;
+      height: 6px;
+      cursor: ns-resize;
+      z-index: 10;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .resize-handle:hover {
+      background: rgba(57, 255, 20, 0.1);
     }
 
     /* Header */
@@ -186,10 +208,41 @@ export class TerminalComponent implements AfterViewChecked {
   @ViewChild('termOutput') termOutput!: ElementRef<HTMLElement>;
   @ViewChild('termInput')  termInput!: ElementRef<HTMLInputElement>;
 
+  terminalHeight = signal<number>(220);
+  isResizing = false;
   currentInput = '';
   cmdHistory: string[] = [];
   historyIndex = -1;
   private shouldScroll = false;
+
+  startResizing(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isResizing = true;
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mouseup', this.onMouseUp);
+  }
+
+  onMouseMove = (event: MouseEvent) => {
+    if (!this.isResizing) return;
+    
+    // Calculate new height: window height - current Y - status bar height (22px)
+    const windowHeight = window.innerHeight;
+    const newHeight = windowHeight - event.clientY - 22;
+
+    // Clamp between 80px and 50vh
+    const minHeight = 80;
+    const maxHeight = window.innerHeight * 0.5;
+    const clampedHeight = Math.min(Math.max(newHeight, minHeight), maxHeight);
+
+    this.terminalHeight.set(clampedHeight);
+  };
+
+  onMouseUp = () => {
+    this.isResizing = false;
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('mouseup', this.onMouseUp);
+  };
 
   submitCommand() {
     const input = this.currentInput;

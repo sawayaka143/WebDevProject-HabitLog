@@ -134,35 +134,66 @@ interface StructLine {
           </div>
 
           <!-- description — editable -->
-          <div class="code-line editable-line description-line" (click)="startEdit('description', $event)">
-            <span class="ln">8</span>
-            <div class="desc-wrapper">
-              <span class="indent">    </span><span class="type">char*&nbsp;</span><span class="txt">   </span><span class="field">description</span><span class="txt"> = </span>@if (editingField() === 'description') {<span class="str edit-wrap">"<textarea
-                  class="inline-input desc-textarea"
-                  [value]="editValue()"
-                  (input)="onInput($event)"
-                  (keydown.escape)="cancelEdit()"
-                  (blur)="saveEdit()"
-                  placeholder="use \\n for new lines"
-                  autoFocus
-                ></textarea>"</span><span class="punct">;</span>
-              } @else {<span class="str desc-val">"{{ formattedDescription() }}"</span><span class="punct">;</span><span class="comment">  // editable</span>@if (savedField() === 'description') {<span class="saved-flash"> // saved</span>}
-              }
+          @if (editingField() === 'description') {
+            <div class="code-line editable-line" (click)="startEdit('description', $event)">
+              <span class="ln">8</span>
+              <span class="indent">    </span>
+              <span class="type">char*&nbsp;</span>
+              <span class="txt">   </span>
+              <span class="field">description</span>
+              <span class="txt"> = </span>
+              <span class="str edit-wrap">"<textarea
+                class="inline-input desc-textarea"
+                [value]="editValue()"
+                (input)="onInput($event)"
+                (keydown.escape)="cancelEdit()"
+                (blur)="saveEdit()"
+                placeholder="use \\n for new lines"
+                autoFocus
+              ></textarea>"</span>
+              <span class="punct">;</span>
             </div>
-          </div>
+          } @else {
+            @for (seg of descriptionSegments(); track $index; let i = $index, last = $last, first = $first) {
+              <div class="code-line editable-line" (click)="startEdit('description', $event)">
+                <span class="ln">{{ 8 + i }}</span>
+                @if (first) {
+                  <span class="indent">    </span>
+                  <span class="type">char*&nbsp;</span>
+                  <span class="txt">   </span>
+                  <span class="field">description</span>
+                  <span class="txt"> = </span>
+                  <span class="str">"</span>
+                } @else {
+                  <span class="txt">                           </span> <!-- 27 spaces -->
+                }
+
+                <span class="str">{{ seg }}</span>
+
+                @if (last) {
+                  <span class="str">"</span>
+                  <span class="punct">;</span>
+                  <span class="comment">  // editable</span>
+                  @if (savedField() === 'description') {
+                    <span class="saved-flash"> // saved</span>
+                  }
+                }
+              </div>
+            }
+          }
 
           <!-- closing brace -->
           <div class="code-line">
-            <span class="ln">9</span>
+            <span class="ln">{{ lastLineNo() + 1 }}</span>
             <span class="txt">&#125; </span>
             <span class="type">Task</span>
             <span class="punct">;</span>
           </div>
 
           <!-- blank + hint -->
-          <div class="code-line"><span class="ln">10</span></div>
+          <div class="code-line"><span class="ln">{{ lastLineNo() + 2 }}</span></div>
           <div class="code-line">
-            <span class="ln">11</span>
+            <span class="ln">{{ lastLineNo() + 3 }}</span>
             <span class="comment">// Click a field value to edit · Press Enter or Ctrl+S to save</span>
           </div>
         </div>
@@ -294,6 +325,14 @@ interface StructLine {
       max-width: 400px;
       width: auto;
     }
+    .inline-input:focus,
+    .inline-input:focus-visible,
+    .inline-input:focus-within {
+      outline: none !important;
+      box-shadow: none !important;
+      background: transparent;
+    }
+
     .desc-input { min-width: 300px; }
     .desc-textarea {
       min-width: 380px;
@@ -304,21 +343,15 @@ interface StructLine {
       line-height: 1.5;
       overflow-y: hidden;
     }
-    .description-line {
-      align-items: flex-start;
+    .desc-textarea:focus,
+    .desc-textarea:focus-visible,
+    .desc-textarea:focus-within {
+      outline: none !important;
+      box-shadow: none !important;
+      border: none !important;
+      background: transparent;
     }
-    .description-line .ln {
-      line-height: 22px;
-    }
-    .desc-wrapper {
-      flex: 1;
-      padding-left: 27ch;
-      text-indent: -27ch;
-      white-space: pre-wrap;
-      word-break: break-word;
-      line-height: 22px;
-      font-family: var(--font-mono);
-    }
+    
     .inline-select {
       background: var(--bg-secondary);
       border: 1px solid var(--accent-green);
@@ -327,6 +360,12 @@ interface StructLine {
       font-size: 13px;
       outline: none;
       padding: 0 2px;
+    }
+    .inline-select:focus,
+    .inline-select:focus-visible,
+    .inline-select:focus-within {
+      outline: none !important;
+      box-shadow: none !important;
     }
 
     /* Saved flash */
@@ -388,10 +427,16 @@ export class TaskEditorComponent {
     return this.state.getTaskByFilename(id) ?? null;
   });
 
-  formattedDescription = computed(() => {
+  descriptionSegments = computed<string[]>(() => {
     const t = this.task();
-    if (!t || !t.description) return '[click to edit]';
-    return t.description.split('\\n').join('\n');
+    if (!t) return [];
+    if (!t.description) return [''];
+    return t.description.split('\\n');
+  });
+
+  lastLineNo = computed<number>(() => {
+    const segs = this.descriptionSegments();
+    return 8 + Math.max(0, segs.length - 1);
   });
 
   @HostListener('window:keydown', ['$event'])
