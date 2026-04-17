@@ -1,0 +1,33 @@
+<nav class="glass-nav">
+  <div class="container d-flex justify-between align-center" style="height: 60px;">
+    <a routerLink="/" class="text-primary"
+      style="font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px;">HabitLog</a>
+
+    <div class="d-flex align-center gap-4">
+      @if (auth.currentUser()) {
+      <div class="dropdown-container">
+        <button class="avatar-btn" (click)="toggleDropdown($event)">
+          {{ auth.currentUser()?.username?.[0] | uppercase }}
+        </button>
+
+        <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen()}">
+          <div class="dropdown-header">
+            <span class="user-name">{{ auth.currentUser()?.username }}</span>
+            <span class="user-xp">{{ auth.currentUser()?.xp }} XP</span>
+          </div>
+          <div class="dropdown-divider"></div>
+
+          <a routerLink="/dashboard" class="dropdown-item" (click)="closeDropdown()">📋 Dashboard</a>
+          <a routerLink="/statistics" class="dropdown-item" (click)="closeDropdown()">📊 Statistics</a>
+          <a routerLink="/profile" class="dropdown-item" (click)="closeDropdown()">⚙️ Settings & Profile</a>
+
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item text-danger" (click)="logout()">🚪 Logout</button>
+        </div>
+      </div>
+      } @else {
+      <a routerLink="/login" class="btn btn-primary" style="padding: 0.4rem 1rem;">Login</a>
+      }
+    </div>
+  </div>
+</nav>
