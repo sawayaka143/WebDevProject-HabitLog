@@ -16,10 +16,6 @@ export class Profile {
 
   savedMessage = '';
 
-  get currentLevel() {
-    return Math.floor((this.authService.currentUser()?.xp || 0) / 1000) + 1;
-  }
-
   profileForm = this.fb.group({
     email: [this.authService.currentUser()?.email || '', [Validators.required, Validators.email]],
     username: [this.authService.currentUser()?.username || '', Validators.required]

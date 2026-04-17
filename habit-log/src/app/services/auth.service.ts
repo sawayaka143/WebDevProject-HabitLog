@@ -4,8 +4,6 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  xp: number;
-  level: number;
 }
 
 @Injectable({
@@ -27,9 +25,7 @@ export class AuthService {
     const mockUser: User = {
       id: 1,
       username: username,
-      email: `${username.toLowerCase()}@example.com`,
-      xp: 1540,
-      level: 12
+      email: `${username.toLowerCase()}@example.com`
     };
     this.currentUser.set(mockUser);
     if (typeof localStorage !== 'undefined') {

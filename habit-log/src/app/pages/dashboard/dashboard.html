@@ -1,67 +1,7 @@
 <div class="container mt-4 mb-4" style="max-width: 800px;">
-  <div class="d-flex justify-between align-center mb-4">
-    <div>
-      <h2>Today</h2>
-      <p class="text-muted">{{ today | date:'fullDate' }}</p>
-    </div>
-  </div>
-
-  <!-- Quick Add Task Input -->
-  <div class="glass-card mb-4 add-task-container">
-    <form [formGroup]="habitForm" (ngSubmit)="addHabit()">
-      <input type="text" class="task-input" formControlName="title" placeholder="Adding a Task">
-
-      <div class="task-actions d-flex justify-between align-center mt-3">
-        <div class="date-selector d-flex gap-1 flex-wrap">
-          <button type="button" class="date-btn" [ngClass]="{'active': selectedDate === 'Today'}"
-            (click)="setDate('Today')">
-            <span class="icon">☀️</span> Today
-          </button>
-          <button type="button" class="date-btn" [ngClass]="{'active': selectedDate === 'Tomorrow'}"
-            (click)="setDate('Tomorrow')">
-            <span class="icon">🌅</span> Tomorrow
-          </button>
-          <button type="button" class="date-btn" [ngClass]="{'active': selectedDate === 'Next Week'}"
-            (click)="setDate('Next Week')">
-            <span class="icon">📅</span> Next Week
-          </button>
-          <button type="button" class="date-btn" [ngClass]="{'active': selectedDate === 'Next Month'}"
-            (click)="setDate('Next Month')">
-            <span class="icon">🌙</span> Next Month
-          </button>
-        </div>
-
-        <button type="submit" class="btn btn-primary" style="padding: 0.4rem 1rem;"
-          [disabled]="!habitForm.value.title">Save</button>
-      </div>
-    </form>
-  </div>
-
-  <div class="d-flex flex-column gap-2">
-    @for (habit of filteredHabits(); track habit.id) {
-    <div class="glass-card task-card d-flex justify-between align-center"
-      [ngClass]="{'completed-card': habit.completedToday}">
-      <div class="d-flex align-center gap-3 w-100">
-        <button class="complete-toggle" [ngClass]="{'active': habit.completedToday}" (click)="toggleHabit(habit.id)">
-          @if (habit.completedToday) {
-          <span>✔</span>
-          }
-        </button>
-        <div class="w-100">
-          <h3 [ngClass]="{'text-strike': habit.completedToday}"
-            style="margin-bottom: 0; font-size: 1.1rem; font-weight: 500;">
-            {{ habit.title }}
-          </h3>
-        </div>
-        <span class="date-badge">{{ habit.targetDate }}</span>
-      </div>
-    </div>
-    } @empty {
-    <div class="empty-state text-center p-4 mt-4">
-      <div class="empty-illustration mb-2">🌜</div>
-      <h3 class="mb-1 text-primary">No tasks today</h3>
-      <p class="text-muted">Enjoy your evening</p>
-    </div>
-    }
+  <div class="glass-card text-center p-4">
+    <h2 class="text-primary mb-3">HabitLog IDE</h2>
+    <p class="text-muted mb-4">The traditional dashboard has been sunset in favor of the new Retro IDE experience.</p>
+    <p class="text-muted">Use the desktop-style interface to manage your tasks and habits.</p>
   </div>
 </div>

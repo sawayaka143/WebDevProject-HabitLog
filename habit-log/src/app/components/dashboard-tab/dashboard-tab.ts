@@ -21,18 +21,6 @@ export class DashboardTabComponent {
     return this.state.habits().reduce((acc, h) => acc + h.days.filter(d => d).length, 0);
   });
 
-  bestGlobalStreak = computed(() => {
-    const today = new Date().getDay();
-    let maxStreak = 0;
-    this.state.habits().forEach(h => {
-      let s = 0;
-      for (let i = today; i >= 0; i--) {
-        if (h.days[i]) { s++; if (s > maxStreak) maxStreak = s; }
-        else break;
-      }
-    });
-    return maxStreak;
-  });
 
   tagStats = computed(() => {
     const counts: Record<string, number> = { work: 0, personal: 0, health: 0 };

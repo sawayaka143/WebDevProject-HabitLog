@@ -7,7 +7,6 @@
         <span>{{ authService.currentUser()?.username?.[0] | uppercase }}</span>
       </div>
       <h3 class="text-accent">{{ authService.currentUser()?.username }}</h3>
-      <p class="text-muted">Level {{ currentLevel }} · {{ authService.currentUser()?.xp }} XP</p>
     </div>
 
     <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">

@@ -119,16 +119,6 @@ export class IdeStateService {
   totalTodos = computed(() => this.tasks().length);
   completedTodos = computed(() => this.tasks().filter(t => t.status === 'done').length);
   totalHabits = computed(() => this.habits().length);
-  totalActiveStreak = computed(() => {
-    const today = new Date().getDay();
-    return this.habits().reduce((acc, h) => {
-      let s = 0;
-      for (let i = today; i >= 0; i--) {
-        if (h.days[i]) s++; else break;
-      }
-      return acc + s;
-    }, 0);
-  });
 
   // ───────── TAB ACTIONS ─────────
   openTab(tab: OpenTab) {
