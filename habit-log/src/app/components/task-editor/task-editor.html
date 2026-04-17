@@ -1,0 +1,182 @@
+@if (task(); as t) {
+<div class="editor-wrap" (click)="focusEditor()">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <span class="bc-folder">todos</span>
+    <span class="bc-sep"> > </span>
+    <span class="bc-file">{{ t.filename }}</span>
+    @if (state.isDirty(t.filename)) {
+    <span class="bc-dirty"> ● unsaved</span>
+    }
+  </div>
+
+  <!-- Code area -->
+  <div class="code-area" #codeArea>
+    <!-- Line 1: comment -->
+    <div class="code-line">
+      <span class="ln">1</span>
+      <span class="comment">// {{ t.filename }}</span>
+    </div>
+    <!-- Line 2: blank -->
+    <div class="code-line"><span class="ln">2</span></div>
+    <!-- Line 3: typedef -->
+    <div class="code-line">
+      <span class="ln">3</span>
+      <span class="kw">typedef</span>
+      <span class="txt">&nbsp;</span>
+      <span class="kw">struct</span>
+      <span class="txt">&nbsp;&#123;</span>
+    </div>
+
+    <!-- title -->
+    <div class="code-line">
+      <span class="ln">4</span>
+      <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span class="type">char*</span>
+      <span class="txt">&nbsp;&nbsp;</span>
+      <span class="field">title</span>
+      <span class="txt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span>
+      <span class="str">"{{ t.title }}"</span>
+      <span class="punct">;</span>
+    </div>
+
+    <!-- status — editable -->
+    <div class="code-line editable-line" (click)="startEdit('status', $event)">
+      <span class="ln">5</span>
+      <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span class="type">char*</span>
+      <span class="txt">&nbsp;&nbsp;</span>
+      <span class="field">status</span>
+      <span class="txt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span>
+      @if (editingField() === 'status') {
+      <span class="str edit-wrap">"<input class="inline-input" [value]="editValue()" (input)="onInput($event)"
+          (keydown.enter)="saveEdit()" (keydown.escape)="cancelEdit()" (blur)="saveEdit()" autoFocus />"</span>
+      } @else {
+      <span class="str" [class.done-val]="t.status === 'done'">"{{ t.status }}"</span>
+      }
+      <span class="punct">;</span>
+      <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// pending | done</span>
+      @if (savedField() === 'status') {
+      <span class="saved-flash"> // saved</span>
+      }
+    </div>
+
+    <!-- tag -->
+    <div class="code-line editable-line" (click)="startEditTag($event)">
+      <span class="ln">6</span>
+      <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span class="type">char*</span>
+      <span class="txt">&nbsp;&nbsp;</span>
+      <span class="field">tag</span>
+      <span class="txt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span>
+      @if (editingField() === 'tag') {
+      <span class="str edit-wrap">"<select class="inline-select" [value]="editValue()" (change)="onSelectChange($event)"
+          (blur)="saveEdit()" (keydown.escape)="cancelEdit()" autoFocus>
+          <option value="work">work</option>
+          <option value="personal">personal</option>
+          <option value="health">health</option>
+        </select>"</span>
+      } @else {
+      <span class="str tag-val" [ngClass]="'tag-' + t.tag">"{{ t.tag }}"</span>
+      }
+      <span class="punct">;</span>
+      <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// work | personal |
+        health</span>
+      @if (savedField() === 'tag') {
+      <span class="saved-flash"> // saved</span>
+      }
+    </div>
+
+    <!-- created_at -->
+    <div class="code-line">
+      <span class="ln">7</span>
+      <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span class="type">char*</span>
+      <span class="txt">&nbsp;&nbsp;</span>
+      <span class="field">created_at</span>
+      <span class="txt">&nbsp;&nbsp;=&nbsp;</span>
+      <span class="str">"{{ t.created_at }}"</span>
+      <span class="punct">;</span>
+    </div>
+
+    <!-- description — editable -->
+    @if (editingField() === 'description') {
+    <div class="code-line desc-line editable-line" (click)="startEdit('description', $event)">
+      <span class="ln">8</span>
+      <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span class="type">char*</span>
+      <span class="txt">&nbsp;&nbsp;</span>
+      <span class="field">description</span>
+      <span class="txt">&nbsp;=&nbsp;</span>
+      <span class="str edit-wrap">"<textarea class="inline-input desc-textarea" [value]="editValue()"
+          (input)="onInput($event)" (keydown.escape)="cancelEdit()" (blur)="saveEdit()"
+          placeholder="use \\n for new lines" autoFocus></textarea>"</span>
+      <span class="punct">;</span>
+    </div>
+    } @else {
+    @for (seg of descriptionSegments(); track $index; let i = $index, last = $last, first = $first) {
+    <div class="code-line editable-line" (click)="startEdit('description', $event)">
+      <span class="ln">{{ 8 + i }}</span>
+      @if (first) {
+      <span class="indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span class="type">char*</span>
+      <span class="txt">&nbsp;&nbsp;</span>
+      <span class="field">description</span>
+      <span class="txt">&nbsp;=&nbsp;</span>
+      <span class="str">"</span>
+      } @else {
+      <span
+        class="indent">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      }
+
+      <span class="str">{{ seg }}</span>
+
+      @if (last) {
+      <span class="str">"</span>
+      <span class="punct">;</span>
+      <span class="comment">&nbsp;&nbsp;// editable</span>
+      @if (savedField() === 'description') {
+      <span class="saved-flash"> // saved</span>
+      }
+      }
+    </div>
+    }
+    }
+
+    <!-- closing brace -->
+    <div class="code-line">
+      <span class="ln">{{ lastLineNo() + 1 }}</span>
+      <span class="txt">&#125;&nbsp;</span>
+      <span class="type">Task</span>
+      <span class="punct">;</span>
+    </div>
+
+    <!-- blank + hint -->
+    <div class="code-line"><span class="ln">{{ lastLineNo() + 2 }}</span></div>
+    <div class="code-line">
+      <span class="ln">{{ lastLineNo() + 3 }}</span>
+      <span class="comment">// Click a field value to edit · Press Enter or Ctrl+S to save</span>
+    </div>
+  </div>
+
+  <!-- Action toolbar -->
+  <div class="action-bar">
+    <button class="btn-status" [class.done]="t.status === 'done'" (click)="toggleStatus(t)">
+      @if (t.status === 'done') {
+      <span>✓ Mark Pending</span>
+      } @else {
+      <span>✓ Mark Done</span>
+      }
+    </button>
+    <button class="btn-save" [class.visible]="state.isDirty(t.filename)" (click)="forceSave(t)">
+      💾 Save
+    </button>
+  </div>
+
+</div>
+} @else {
+<div class="no-file">
+  <span class="comment">// Select a file from the Explorer to view it here</span>
+</div>
+}
