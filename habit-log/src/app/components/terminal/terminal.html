@@ -1,0 +1,44 @@
+<div class="terminal-shell" [class.collapsed]="state.terminalCollapsed()"
+  [style.height.px]="state.terminalCollapsed() ? 32 : terminalHeight()">
+
+  <!-- Resize Handle -->
+  @if (!state.terminalCollapsed()) {
+  <div class="resize-handle" (mousedown)="startResizing($event)"></div>
+  }
+
+  <!-- Terminal header bar -->
+  <div class="term-header" (click)="state.toggleTerminal()">
+    <div class="term-tabs">
+      <span class="term-tab active">TERMINAL</span>
+    </div>
+    <div class="term-header-actions">
+      <button class="term-btn" (click)="clearTerminal($event)" title="Clear terminal">✕ Clear</button>
+      <button class="term-btn collapse-btn" title="Toggle terminal">
+        {{ state.terminalCollapsed() ? '▲' : '▼' }}
+      </button>
+    </div>
+  </div>
+
+  @if (!state.terminalCollapsed()) {
+  <!-- Output area -->
+  <div class="term-output" #termOutput>
+    @for (line of state.terminalHistory(); track $index) {
+    <div class="term-line" [ngClass]="'line-' + line.type">
+      @if (line.type === 'prompt') {
+      <span class="prompt-text">{{ line.text }}</span>
+      } @else {
+      <span class="output-text">{{ line.text }}</span>
+      }
+    </div>
+    }
+  </div>
+
+  <!-- Input row -->
+  <div class="term-input-row">
+    <span class="prompt-label">workspace/todos&nbsp;<span class="prompt-dollar">$</span></span>
+    <input #termInput class="term-input" type="text" [(ngModel)]="currentInput" (keydown.enter)="submitCommand()"
+      (keydown.ArrowUp)="historyUp($event)" (keydown.ArrowDown)="historyDown($event)"
+      [placeholder]="'type a command...'" autocomplete="off" spellcheck="false" />
+  </div>
+  }
+</div>
