@@ -1,0 +1,60 @@
+<div class="habits-container">
+
+  <div class="file-comment">// habits.h — Weekly habit tracker</div>
+
+  <div class="grid-header">
+    <div class="header-cell empty-cell"></div>
+    <div class="header-cell name-cell">// function</div>
+    @for (day of days; track day; let i = $index) {
+      <div class="header-cell day-cell" [class.today]="i === todayIndex">
+        {{ day }}
+      </div>
+    }
+    <div class="header-cell streak-cell">streak</div>
+  </div>
+
+  <div class="habits-list">
+    @for (habit of state.habits(); track habit.id; let rowIdx = $index) {
+      <div class="habit-row">
+        <div class="cell line-num">{{ (rowIdx + 1).toString().padStart(2, '0') }}</div>
+        <div class="cell name-cell">
+          <span class="fn-blue">{{ habit.name }}</span><span class="fn-paren">() &#123;</span>
+        </div>
+
+        @for (completed of habit.days; track $index; let colIdx = $index) {
+          <div class="cell day-cell" [class.today]="colIdx === todayIndex">
+            <div
+              class="toggle-box"
+              [class.on]="completed"
+              (click)="state.toggleHabitDay(habit.id, colIdx)"
+            >{{ completed ? '█' : '·' }}</div>
+          </div>
+        }
+
+        <div class="cell streak-cell" [class.active-streak]="getStreak(habit.days) > 0">
+          <span class="fn-blue">&#125;</span>
+          @if (getStreak(habit.days) > 0) {
+            <span class="badge">{{ getStreak(habit.days) }}d 🔥</span>
+          }
+        </div>
+      </div>
+    }
+    @if (state.habits().length === 0) {
+      <div class="empty-state">// No habits defined. Add one below.</div>
+    }
+  </div>
+
+  <div class="input-row">
+    <span class="prompt-sym">›</span>
+    <span class="fn-blue">def</span>
+    <input
+      type="text"
+      [(ngModel)]="newHabitName"
+      (keyup.enter)="addHabit()"
+      placeholder="habit_name"
+      class="habit-input"
+    />
+    <span class="fn-paren">():</span>
+    <button (click)="addHabit()" class="btn-create">+ ADD HABIT</button>
+  </div>
+</div>
