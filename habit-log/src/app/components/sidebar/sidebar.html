@@ -1,0 +1,67 @@
+<div class="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-title">EXPLORER</span>
+  </div>
+
+  <!-- WORKSPACE root -->
+  <div class="tree-root">
+    <span class="root-label">HABITLOG</span>
+  </div>
+
+  <!-- todos/ folder -->
+  <div class="folder-row" (click)="state.todosExpanded.update(v => !v)">
+    <span class="arrow">{{ state.todosExpanded() ? '▾' : '▸' }}</span>
+    <span class="folder-icon">📁</span>
+    <span class="folder-name">todos</span>
+    <span class="file-count">{{ state.tasks().length }}</span>
+  </div>
+
+  @if (state.todosExpanded()) {
+  @for (task of state.tasks(); track task.id) {
+  <div class="file-row" [class.active]="state.activeTabId() === task.filename"
+    [class.open]="state.isTabOpen(task.filename)" (click)="openTask(task)">
+    <span class="file-indent"></span>
+    <span class="file-type-icon task-icon">T</span>
+    <span class="file-name" [class.done-file]="task.status === 'done'">{{ task.filename }}</span>
+    @if (state.isDirty(task.filename)) {
+    <span class="dirty-dot" title="Unsaved changes">●</span>
+    }
+  </div>
+  }
+  @if (state.tasks().length === 0) {
+  <div class="empty-folder">// empty</div>
+  }
+  }
+
+  <!-- habits/ folder -->
+  <div class="folder-row" (click)="state.habitsExpanded.update(v => !v)">
+    <span class="arrow">{{ state.habitsExpanded() ? '▾' : '▸' }}</span>
+    <span class="folder-icon">📁</span>
+    <span class="folder-name">habits</span>
+  </div>
+
+  @if (state.habitsExpanded()) {
+  <div class="file-row" [class.active]="state.activeTabId() === 'habits.h'" [class.open]="state.isTabOpen('habits.h')"
+    (click)="openHabits()">
+    <span class="file-indent"></span>
+    <span class="file-type-icon h-icon">H</span>
+    <span class="file-name">habits.h</span>
+  </div>
+  }
+
+  <!-- dashboard/ folder -->
+  <div class="folder-row" (click)="state.dashboardExpanded.update(v => !v)">
+    <span class="arrow">{{ state.dashboardExpanded() ? '▾' : '▸' }}</span>
+    <span class="folder-icon">📁</span>
+    <span class="folder-name">dashboard</span>
+  </div>
+
+  @if (state.dashboardExpanded()) {
+  <div class="file-row" [class.active]="state.activeTabId() === 'dashboard.log'"
+    [class.open]="state.isTabOpen('dashboard.log')" (click)="openDashboard()">
+    <span class="file-indent"></span>
+    <span class="file-type-icon log-icon">LOG</span>
+    <span class="file-name">dashboard.log</span>
+  </div>
+  }
+</div>
