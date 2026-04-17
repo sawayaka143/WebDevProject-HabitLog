@@ -1,0 +1,31 @@
+<div class="container mt-4 mb-4">
+  <h2 class="mb-4">Your Progress Statistics</h2>
+
+  <div class="d-flex gap-4 mb-4 flex-wrap">
+    <div class="glass-card text-center" style="flex: 1; min-width: 250px;">
+      <h3 class="text-accent" style="font-size: 3.5rem;">{{ habitService.totalXp() }}</h3>
+      <p class="text-muted">Total XP Earned</p>
+    </div>
+
+    <div class="glass-card text-center" style="flex: 1; min-width: 250px;">
+      <h3 class="text-accent" style="font-size: 3.5rem;">{{ completionRate() }}%</h3>
+      <p class="text-muted">Daily Completion Rate</p>
+    </div>
+
+    <div class="glass-card text-center" style="flex: 1; min-width: 250px;">
+      <h3 class="text-accent" style="font-size: 3.5rem;">{{ highestStreak() }}</h3>
+      <p class="text-muted">Highest Streak (Days)</p>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <h3 class="mb-4">Level Progress (Level {{ currentLevel() }})</h3>
+    <div class="progress-bar-container">
+      <div class="progress-bar" [style.width.%]="levelProgress()"></div>
+    </div>
+    <div class="d-flex justify-between mt-2">
+      <span class="text-muted">XP to next level: {{ xpToNextLevel() }}</span>
+      <span class="text-muted">{{ levelProgress() }}% Complete</span>
+    </div>
+  </div>
+</div>
