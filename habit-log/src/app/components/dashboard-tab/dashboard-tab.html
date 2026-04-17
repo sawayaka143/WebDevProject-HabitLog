@@ -1,0 +1,52 @@
+<div class="dashboard-container">
+
+  <div class="file-comment">// dashboard.log — System overview & activity log</div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">TASKS_DONE</div>
+      <div class="stat-val text-green">{{ state.completedTodos() }}</div>
+      <div class="stat-sub">of {{ state.totalTodos() }} total</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">COMPLETION_%</div>
+      <div class="stat-val text-amber">{{ completionPercentage() }}<span class="pct">%</span></div>
+      <div class="stat-sub">completion rate</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">HABIT_CHECKS</div>
+      <div class="stat-val text-blue">{{ totalHabitChecks() }}</div>
+      <div class="stat-sub">this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">BEST_STREAK</div>
+      <div class="stat-val text-danger">{{ bestGlobalStreak() }}<span class="pct">d</span></div>
+      <div class="stat-sub">longest streak</div>
+    </div>
+  </div>
+
+  <div class="tag-row">
+    @for (tag of tagStats(); track tag.name) {
+      <div class="tag-chip" [ngClass]="'tag-' + tag.name">
+        <span class="tag-name">{{ tag.name }}</span>
+        <span class="tag-count">{{ tag.count }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="log-section">
+    <div class="log-header">~/workspace/system.log</div>
+    <div class="log-window">
+      @for (log of displayedLogs(); track log.id) {
+        <div class="log-row fade-in">
+          <span class="log-time">[{{ log.time }}]</span>
+          <span class="log-arrow">&gt;</span>
+          <span class="log-msg">{{ log.action }}</span>
+        </div>
+      }
+      @if (displayedLogs().length === 0) {
+        <div class="log-row text-muted">// No recent activity</div>
+      }
+    </div>
+  </div>
+</div>
