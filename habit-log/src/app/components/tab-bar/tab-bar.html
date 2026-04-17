@@ -1,0 +1,16 @@
+<div class="tab-bar">
+  @for (tab of state.openTabs(); track tab.id) {
+  <div class="tab" [class.active]="state.activeTabId() === tab.id" [class.dirty]="state.isDirty(tab.id)"
+    (click)="state.activeTabId.set(tab.id)" (mousedown)="onMiddleClick($event, tab.id)">
+    <span class="tab-icon" [ngClass]="getIconClass(tab)">{{ getIconLabel(tab) }}</span>
+    <span class="tab-label">{{ tab.label }}</span>
+    @if (state.isDirty(tab.id)) {
+    <span class="tab-dirty-dot" title="Unsaved changes">●</span>
+    }
+    <button class="tab-close" (click)="closeTab($event, tab.id)" title="Close">✕</button>
+  </div>
+  }
+  @if (state.openTabs().length === 0) {
+  <div class="tab-empty">// No files open — click a file in the Explorer</div>
+  }
+</div>
