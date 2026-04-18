@@ -48,7 +48,7 @@ The Django backend should implement the following models (or equivalent):
 
 ---
 
-## 🔐 Auth Endpoints
+## Auth Endpoints
 
 ### Login
 - **Method:** `POST /api/v1/auth/login/`
@@ -92,7 +92,7 @@ The Django backend should implement the following models (or equivalent):
 
 ---
 
-## 📝 Tasks Endpoints
+## Tasks Endpoints
 
 ### List Tasks
 - **Method:** `GET /api/v1/tasks/`
@@ -150,7 +150,7 @@ The Django backend should implement the following models (or equivalent):
 
 ---
 
-## 🔁 Habits Endpoints
+## Habits Endpoints
 
 ### List Habits
 - **Method:** `GET /api/v1/habits/`
@@ -199,7 +199,7 @@ The Django backend should implement the following models (or equivalent):
 
 ---
 
-## 📜 Logs Endpoints
+## Logs Endpoints
 
 ### List Logs
 - **Method:** `GET /api/v1/logs/`
@@ -223,7 +223,7 @@ The Django backend should implement the following models (or equivalent):
 
 ---
 
-## 🚫 What we do NOT need (Dead & Unused Code)
+## What we do NOT need (Dead & Unused Code)
 
 Please ignore the following when building the backend, as they are not used or represent duplicated/dead code on the frontend:
 
