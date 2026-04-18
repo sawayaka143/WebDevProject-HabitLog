@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export type TagType = 'work' | 'personal' | 'health';
 export type FilterType = 'all_tasks' | 'work' | 'personal' | 'health' | 'pending' | 'completed';
@@ -48,6 +49,7 @@ function toSnakeCase(text: string): string {
   providedIn: 'root'
 })
 export class IdeStateService {
+  private apiUrl = 'http://127.0.0.1:8000/api/v1';
 
   // ───────── TASKS ─────────
   tasks = signal<Task[]>([
@@ -120,6 +122,66 @@ export class IdeStateService {
   completedTodos = computed(() => this.tasks().filter(t => t.status === 'done').length);
   totalHabits = computed(() => this.habits().length);
 
+  constructor(private http: HttpClient) {
+    if (typeof window !== 'undefined' && this.hasToken()) {
+      this.loadTasks();
+      this.loadHabits();
+      this.loadLogs();
+    }
+  }
+
+  initializeAfterLogin() {
+    this.loadTasks();
+    this.loadHabits();
+    this.loadLogs();
+  }
+
+  private getHeaders(): HttpHeaders {
+    const token =
+      typeof window !== 'undefined' && window.localStorage
+        ? window.localStorage.getItem('token') || ''
+        : '';
+
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+  private hasToken(): boolean {
+    return typeof window !== 'undefined' && !!window.localStorage.getItem('token');
+  }
+
+  private loadTasks() {
+    this.http.get<Task[]>(`${this.apiUrl}/tasks/`, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (data) => this.tasks.set(data),
+      error: (err) => console.error('Load tasks error', err)
+    });
+  }
+
+  private loadHabits() {
+    this.http.get<Habit[]>(`${this.apiUrl}/habits/`, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (data) => this.habits.set(data.map(h => ({
+        ...h,
+        id: String(h.id)
+      }))),
+      error: (err) => console.error('Load habits error', err)
+    });
+  }
+
+  private loadLogs() {
+    this.http.get<LogEntry[]>(`${this.apiUrl}/logs/`, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (data) => this.logs.set(data),
+      error: (err) => console.error('Load logs error', err)
+    });
+  }
+
   // ───────── TAB ACTIONS ─────────
   openTab(tab: OpenTab) {
     const existing = this.openTabs().find(t => t.id === tab.id);
@@ -164,49 +226,83 @@ export class IdeStateService {
   createTask(title: string): Task {
     const filename = toSnakeCase(title) + '.task';
     const today = new Date().toISOString().split('T')[0];
-    const newTask: Task = {
-      id: Date.now().toString(),
+    const newTaskPayload = {
       filename,
       title,
-      status: 'pending',
-      tag: 'work',
+      status: 'pending' as const,
+      tag: 'work' as const,
       created_at: today,
       description: ''
     };
-    this.tasks.update(t => [...t, newTask]);
-    this.addLog(`[TASK] CREATE: ${filename}`);
-    return newTask;
+
+    const optimisticTask: Task = {
+      id: Date.now().toString(),
+      ...newTaskPayload
+    };
+
+    this.http.post<Task>(`${this.apiUrl}/tasks/`, newTaskPayload, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (createdTask) => {
+        this.tasks.update(t => [...t, createdTask]);
+        this.loadLogs();
+      },
+      error: (err) => console.error('Create task error', err)
+    });
+
+    return optimisticTask;
   }
 
   updateTask(id: string, patch: Partial<Task>) {
-    this.tasks.update(tasks =>
-      tasks.map(t => {
-        if (t.id === id) {
-          const updated = { ...t, ...patch };
-          this.addLog(`[TASK] UPDATE: ${t.filename}`);
-          return updated;
-        }
-        return t;
-      })
-    );
+    this.http.patch<Task>(`${this.apiUrl}/tasks/${id}/`, patch, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (updatedTask) => {
+        this.tasks.update(tasks =>
+          tasks.map(t => t.id === id ? updatedTask : t)
+        );
+        this.loadLogs();
+      },
+      error: (err) => console.error('Update task error', err)
+    });
   }
 
   deleteTask(filename: string): boolean {
     const task = this.tasks().find(t => t.filename === filename);
     if (!task) return false;
-    this.tasks.update(t => t.filter(x => x.filename !== filename));
-    this.closeTab(filename);
-    this.addLog(`[TASK] DELETE: ${filename}`);
+
+    this.http.delete(`${this.apiUrl}/tasks/${task.id}/`, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: () => {
+        this.tasks.update(t => t.filter(x => x.filename !== filename));
+        this.closeTab(filename);
+        this.loadLogs();
+      },
+      error: (err) => console.error('Delete task error', err)
+    });
+
     return true;
   }
 
   markTaskDone(filename: string): boolean {
     const task = this.tasks().find(t => t.filename === filename);
     if (!task) return false;
-    this.tasks.update(tasks =>
-      tasks.map(t => t.filename === filename ? { ...t, status: 'done' } : t)
-    );
-    this.addLog(`[TASK] DONE: ${filename}`);
+
+    this.http.patch<Task>(`${this.apiUrl}/tasks/${task.id}/`, {
+      status: 'done'
+    }, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (updatedTask) => {
+        this.tasks.update(tasks =>
+          tasks.map(t => t.filename === filename ? updatedTask : t)
+        );
+        this.loadLogs();
+      },
+      error: (err) => console.error('Mark task done error', err)
+    });
+
     return true;
   }
 
@@ -216,27 +312,50 @@ export class IdeStateService {
 
   // ───────── HABIT ACTIONS ─────────
   addHabit(name: string) {
-    const newHabit: Habit = {
-      id: Date.now().toString(),
-      name,
-      days: [false, false, false, false, false, false, false]
-    };
-    this.habits.update(h => [...h, newHabit]);
-    this.addLog(`[HABIT] ADD: ${name}()`);
+    this.http.post<Habit>(`${this.apiUrl}/habits/`, { name }, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (newHabit) => {
+        this.habits.update(h => [...h, { ...newHabit, id: String(newHabit.id) }]);
+        this.loadLogs();
+      },
+      error: (err) => console.error('Add habit error', err)
+    });
+  }
+
+  deleteHabit(habitId: string) {
+    this.http.delete(`${this.apiUrl}/habits/${habitId}/`, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: () => {
+        this.habits.update(h => h.filter(habit => habit.id !== habitId));
+        this.closeTab('habits.h'); // Close habits tab if open
+        this.loadLogs();
+      },
+      error: (err) => console.error('Delete habit error', err)
+    });
   }
 
   toggleHabitDay(habitId: string, dayIndex: number) {
-    this.habits.update(habits =>
-      habits.map(h => {
-        if (h.id === habitId) {
-          const newDays = [...h.days];
-          newDays[dayIndex] = !newDays[dayIndex];
-          this.addLog(`[HABIT] TOGGLED: ${h.name}() day ${dayIndex}`);
-          return { ...h, days: newDays };
-        }
-        return h;
-      })
-    );
+    const habit = this.habits().find(h => h.id === habitId);
+    if (!habit) return;
+
+    const newDays = [...habit.days];
+    newDays[dayIndex] = !newDays[dayIndex];
+
+    this.http.patch<Habit>(`${this.apiUrl}/habits/${habitId}/`, {
+      days: newDays
+    }, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (updatedHabit) => {
+        this.habits.update(habits =>
+          habits.map(h => h.id === habitId ? { ...updatedHabit, id: String(updatedHabit.id) } : h)
+        );
+        this.loadLogs();
+      },
+      error: (err) => console.error('Toggle habit error', err)
+    });
   }
 
   // ───────── TERMINAL ACTIONS ─────────

@@ -19,6 +19,7 @@
         <div class="cell line-num">{{ (rowIdx + 1).toString().padStart(2, '0') }}</div>
         <div class="cell name-cell">
           <span class="fn-blue">{{ habit.name }}</span><span class="fn-paren">() &#123;</span>
+          <button (click)="deleteHabit(habit.id)" class="btn-delete" title="Delete habit">×</button>
         </div>
 
         @for (completed of habit.days; track $index; let colIdx = $index) {

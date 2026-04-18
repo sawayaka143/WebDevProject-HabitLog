@@ -1,7 +1,53 @@
+<app-nav-bar></app-nav-bar>
 <div class="container mt-4 mb-4">
-  <h2 class="mb-4">Your Progress Statistics</h2>
+  <h2 class="mb-4 text-center">Your Progress Statistics</h2>
 
-  <div class="glass-card text-center">
-    <p class="text-muted">General statistics have been moved to the <span class="text-accent">dashboard.log</span> in the IDE.</p>
+  <div class="stats-grid mb-4">
+    <div class="stat-card">
+      <div class="stat-label">TOTAL TASKS</div>
+      <div class="stat-val text-primary">{{ totalTasks() }}</div>
+      <div class="stat-sub">{{ completedTasks() }} completed, {{ pendingTasks() }} pending</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">COMPLETION RATE</div>
+      <div class="stat-val text-amber">{{ completionPercentage() }}<span class="pct">%</span></div>
+      <div class="stat-sub">of all tasks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">HABIT CHECKS</div>
+      <div class="stat-val text-blue">{{ totalHabitChecks() }}</div>
+      <div class="stat-sub">across {{ totalHabits() }} habits</div>
+    </div>
+  </div>
+
+  <div class="glass-card mb-4">
+    <h3 class="mb-3">Tasks by Category</h3>
+    <div class="tag-stats">
+      @for (tagStat of tasksByTag(); track tagStat.tag) {
+        <div class="tag-stat-item">
+          <span class="tag-name" [ngClass]="'tag-' + tagStat.tag">{{ tagStat.tag | titlecase }}</span>
+          <span class="tag-count">{{ tagStat.count }} total ({{ tagStat.completed }} done)</span>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="tagStat.count > 0 ? (tagStat.completed / tagStat.count) * 100 : 0"></div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <h3 class="mb-3">Recent Activity</h3>
+    <div class="log-window">
+      @for (log of state.logs().slice(0, 20); track log.id) {
+        <div class="log-row">
+          <span class="log-time">[{{ log.time }}]</span>
+          <span class="log-arrow">&gt;</span>
+          <span class="log-msg">{{ log.action }}</span>
+        </div>
+      }
+      @if (state.logs().length === 0) {
+        <div class="log-row text-muted">// No recent activity</div>
+      }
+    </div>
   </div>
 </div>

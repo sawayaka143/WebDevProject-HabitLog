@@ -1,14 +1,17 @@
-import { Routes } from '@angular/router';
+import { Routes, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
 
-const authGuard = () => {
+const authGuard = (_route: any, state: any) => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
   if (!auth.isAuthenticated()) {
-    return router.parseUrl('/login');
+    return router.createUrlTree(['/login'], {
+      queryParams: { redirectTo: state.url }
+    });
   }
+
   return true;
 };
 

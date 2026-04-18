@@ -149,3 +149,28 @@
   color: var(--text-muted);
   font-style: italic;
 }
+
+.new-task-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px 2px 22px;
+  cursor: pointer;
+  color: var(--accent-green);
+  font-size: 12px;
+  transition: background 0.1s;
+}
+.new-task-row:hover {
+  background: var(--bg-hover);
+}
+
+.new-icon {
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--accent-green);
+}
+
+.new-label {
+  flex: 1;
+  font-style: italic;
+}

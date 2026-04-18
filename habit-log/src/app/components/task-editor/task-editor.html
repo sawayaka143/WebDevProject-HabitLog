@@ -172,6 +172,9 @@
     <button class="btn-save" [class.visible]="state.isDirty(t.filename)" (click)="forceSave(t)">
       💾 Save
     </button>
+    <button class="btn-delete" (click)="deleteTask(t.filename)">
+      🗑️ Delete
+    </button>
   </div>
 
 </div>

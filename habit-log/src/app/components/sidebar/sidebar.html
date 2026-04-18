@@ -17,6 +17,11 @@
   </div>
 
   @if (state.todosExpanded()) {
+  <div class="new-task-row" (click)="createNewTask()">
+    <span class="file-indent"></span>
+    <span class="new-icon">+</span>
+    <span class="new-label">New Task</span>
+  </div>
   @for (task of state.tasks(); track task.id) {
   <div class="file-row" [class.active]="state.activeTabId() === task.filename"
     [class.open]="state.isTabOpen(task.filename)" (click)="openTask(task)">
@@ -48,6 +53,25 @@
     <span class="file-name">habits.h</span>
   </div>
   }
+
+  <!-- pages/ folder -->
+  <div class="folder-row">
+    <span class="arrow">▾</span>
+    <span class="folder-icon">📁</span>
+    <span class="folder-name">pages</span>
+  </div>
+
+  <div class="file-row" (click)="navigateTo('/statistics')">
+    <span class="file-indent"></span>
+    <span class="file-type-icon">📊</span>
+    <span class="file-name">statistics.page</span>
+  </div>
+
+  <div class="file-row" (click)="navigateTo('/profile')">
+    <span class="file-indent"></span>
+    <span class="file-type-icon">⚙️</span>
+    <span class="file-name">profile.page</span>
+  </div>
 
   <!-- dashboard/ folder -->
   <div class="folder-row" (click)="state.dashboardExpanded.update(v => !v)">

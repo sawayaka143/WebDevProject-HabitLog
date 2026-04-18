@@ -18,11 +18,7 @@ export class HabitsTabComponent {
   newHabitName = '';
 
   getStreak(days: boolean[]): number {
-    let streak = 0;
-    for (let i = this.todayIndex; i >= 0; i--) {
-      if (days[i]) streak++; else break;
-    }
-    return streak;
+    return days.filter(d => d).length;
   }
 
   addHabit() {
@@ -30,6 +26,12 @@ export class HabitsTabComponent {
     if (cleanName) {
       this.state.addHabit(cleanName);
       this.newHabitName = '';
+    }
+  }
+
+  deleteHabit(habitId: string) {
+    if (confirm('Delete this habit?')) {
+      this.state.deleteHabit(habitId);
     }
   }
 }

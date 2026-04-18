@@ -145,4 +145,10 @@ export class TaskEditorComponent {
       this.state.markClean(t.filename);
     }
   }
+
+  deleteTask(filename: string) {
+    if (confirm('Delete this task?')) {
+      this.state.deleteTask(filename);
+    }
+  }
 }
