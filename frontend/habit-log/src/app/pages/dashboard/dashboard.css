@@ -1,4 +1,4 @@
-/* ─── Dashboard (IDE) Root Layout ─── */
+/* ─── Dashboard Page: IDE Layout ─── */
 :host {
   display: grid;
   grid-template-rows: 32px 1fr 22px;
@@ -45,6 +45,9 @@
   font-size: 12px;
   color: var(--text-muted);
   letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .title-right {
@@ -71,9 +74,9 @@
 /* ── Sidebar ── */
 .ide-sidebar {
   grid-area: sidebar;
+  display: block;
   overflow-y: auto;
   overflow-x: hidden;
-  display: block;
   min-width: 0;
 }
 
@@ -85,6 +88,7 @@
   overflow: hidden;
   background: var(--bg-primary);
   min-width: 0;
+  min-height: 0;
 }
 
 /* ── Editor Area ── */
@@ -183,10 +187,3 @@
 }
 .sb-sep   { opacity: 0.3; }
 .sb-green { color: var(--accent-green); }
-
-.cursor-blink {
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink {
-  50% { opacity: 0; }
-}
