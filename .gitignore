@@ -4,3 +4,5 @@ backend/db.sqlite3
 habit-log/node_modules/
 habit-log/.angular/
 **/__pycache__/
+.claude
+.vscode
