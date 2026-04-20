@@ -1,0 +1,16 @@
+:host { display: flex; align-items: center; justify-content: center; width: 100vw; height: 100vh; background: var(--bg-primary); }
+
+.login-box { width: 360px; padding: 28px 32px; background: var(--bg-secondary); border: 1px solid var(--border-color); }
+
+.brand { color: var(--accent-green); font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.brand-accent { color: var(--accent-amber); animation: blink 1s step-end infinite; }
+.sub { color: var(--text-muted); font-style: italic; font-size: 12px; margin-bottom: 20px; }
+
+form { display: flex; flex-direction: column; gap: 6px; }
+label { color: var(--accent-amber); font-size: 12px; margin-top: 8px; }
+input { background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 8px; font-family: var(--font-mono); font-size: 13px; }
+input:focus { outline: none; border-color: var(--accent-green); }
+
+button { margin-top: 18px; background: transparent; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; font-family: var(--font-mono); font-size: 13px; cursor: pointer; }
+button:hover:not(:disabled) { background: rgba(57,255,20,0.08); }
+button:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--border-color); color: var(--text-muted); }
