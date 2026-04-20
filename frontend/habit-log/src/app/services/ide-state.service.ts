@@ -240,11 +240,15 @@ export class IdeStateService {
       ...newTaskPayload
     };
 
+    this.tasks.update(t => [...t, optimisticTask]);
+
     this.http.post<Task>(`${this.apiUrl}/tasks/`, newTaskPayload, {
       headers: this.getHeaders()
     }).subscribe({
       next: (createdTask) => {
-        this.tasks.update(t => [...t, createdTask]);
+        this.tasks.update(t =>
+          t.map(task => task.id === optimisticTask.id ? createdTask : task)
+        );
         this.loadLogs();
       },
       error: (err) => console.error('Create task error', err)
@@ -254,6 +258,10 @@ export class IdeStateService {
   }
 
   updateTask(id: string, patch: Partial<Task>) {
+    this.tasks.update(tasks =>
+      tasks.map(t => t.id === id ? { ...t, ...patch } : t)
+    );
+
     this.http.patch<Task>(`${this.apiUrl}/tasks/${id}/`, patch, {
       headers: this.getHeaders()
     }).subscribe({
@@ -271,14 +279,13 @@ export class IdeStateService {
     const task = this.tasks().find(t => t.filename === filename);
     if (!task) return false;
 
+    this.tasks.update(t => t.filter(x => x.filename !== filename));
+    this.closeTab(filename);
+
     this.http.delete(`${this.apiUrl}/tasks/${task.id}/`, {
       headers: this.getHeaders()
     }).subscribe({
-      next: () => {
-        this.tasks.update(t => t.filter(x => x.filename !== filename));
-        this.closeTab(filename);
-        this.loadLogs();
-      },
+      next: () => this.loadLogs(),
       error: (err) => console.error('Delete task error', err)
     });
 
@@ -288,6 +295,10 @@ export class IdeStateService {
   markTaskDone(filename: string): boolean {
     const task = this.tasks().find(t => t.filename === filename);
     if (!task) return false;
+
+    this.tasks.update(tasks =>
+      tasks.map(t => t.filename === filename ? { ...t, status: 'done' } : t)
+    );
 
     this.http.patch<Task>(`${this.apiUrl}/tasks/${task.id}/`, {
       status: 'done'
@@ -312,11 +323,21 @@ export class IdeStateService {
 
   // ───────── HABIT ACTIONS ─────────
   addHabit(name: string) {
+    const optimisticHabit: Habit = {
+      id: Date.now().toString(),
+      name,
+      days: [false, false, false, false, false, false, false]
+    };
+
+    this.habits.update(h => [...h, optimisticHabit]);
+
     this.http.post<Habit>(`${this.apiUrl}/habits/`, { name }, {
       headers: this.getHeaders()
     }).subscribe({
       next: (newHabit) => {
-        this.habits.update(h => [...h, { ...newHabit, id: String(newHabit.id) }]);
+        this.habits.update(h =>
+          h.map(habit => habit.id === optimisticHabit.id ? { ...newHabit, id: String(newHabit.id) } : habit)
+        );
         this.loadLogs();
       },
       error: (err) => console.error('Add habit error', err)
@@ -324,14 +345,12 @@ export class IdeStateService {
   }
 
   deleteHabit(habitId: string) {
+    this.habits.update(h => h.filter(habit => habit.id !== habitId));
+
     this.http.delete(`${this.apiUrl}/habits/${habitId}/`, {
       headers: this.getHeaders()
     }).subscribe({
-      next: () => {
-        this.habits.update(h => h.filter(habit => habit.id !== habitId));
-        this.closeTab('habits.h'); // Close habits tab if open
-        this.loadLogs();
-      },
+      next: () => this.loadLogs(),
       error: (err) => console.error('Delete habit error', err)
     });
   }
@@ -342,6 +361,10 @@ export class IdeStateService {
 
     const newDays = [...habit.days];
     newDays[dayIndex] = !newDays[dayIndex];
+
+    this.habits.update(habits =>
+      habits.map(h => h.id === habitId ? { ...h, days: newDays } : h)
+    );
 
     this.http.patch<Habit>(`${this.apiUrl}/habits/${habitId}/`, {
       days: newDays

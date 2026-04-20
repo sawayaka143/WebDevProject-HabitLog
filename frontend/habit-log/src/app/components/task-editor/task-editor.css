@@ -263,6 +263,8 @@
   color: var(--accent-red);
   border-color: var(--accent-red);
   font-size: 12px;
+  order: 1;
+  margin-left: auto;
 }
 .btn-delete:hover {
   background: rgba(255, 95, 87, 0.1);
