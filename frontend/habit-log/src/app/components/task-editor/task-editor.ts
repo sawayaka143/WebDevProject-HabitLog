@@ -39,7 +39,7 @@ export class TaskEditorComponent {
     const t = this.task();
     if (!t) return [];
     if (!t.description) return [''];
-    return t.description.split('\\n');
+    return t.description.split('\n');
   });
 
   lastLineNo = computed<number>(() => {
@@ -109,11 +109,7 @@ export class TaskEditorComponent {
       }
       patch.status = (val === 'done' ? 'done' : 'pending');
     } else if (field === 'description') {
-      const parts = this.editValue()
-        .split('\\n')
-        .map(p => p.trim())
-        .filter(p => p.length > 0);
-      patch.description = parts.join('\\n');
+      patch.description = this.editValue().replace(/\r\n/g, '\n');
     } else if (field === 'tag') {
       patch.tag = this.editValue() as TagType;
     }

@@ -1,6 +1,7 @@
 import { Component, inject, signal, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService, ThemeId } from '../../services/theme.service';
 import { NgClass, UpperCasePipe } from '@angular/common';
 
 @Component({
@@ -12,7 +13,12 @@ import { NgClass, UpperCasePipe } from '@angular/common';
 })
 export class NavBar {
   auth = inject(AuthService);
+  theme = inject(ThemeService);
   isDropdownOpen = signal(false);
+
+  setTheme(id: ThemeId) {
+    this.theme.set(id);
+  }
 
   toggleDropdown(event: Event) {
     event.stopPropagation();

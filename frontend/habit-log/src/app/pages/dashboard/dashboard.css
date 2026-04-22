@@ -1,15 +1,18 @@
 /* ─── Dashboard Page: IDE Layout ─── */
 :host {
   display: grid;
-  grid-template-rows: 32px 1fr 22px;
+  grid-template-rows: 32px 24px 1fr 22px;
   grid-template-areas:
     "title"
+    "menu"
     "body"
     "status";
   height: 100vh;
   width: 100vw;
   overflow: hidden;
 }
+
+app-menubar { grid-area: menu; }
 
 /* ── Title Bar ── */
 .ide-title-bar {

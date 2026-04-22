@@ -1,53 +1,66 @@
 <app-nav-bar></app-nav-bar>
-<div class="container mt-4 mb-4">
-  <h2 class="mb-4 text-center">Your Progress Statistics</h2>
 
-  <div class="stats-grid mb-4">
-    <div class="stat-card">
-      <div class="stat-label">TOTAL TASKS</div>
-      <div class="stat-val text-primary">{{ totalTasks() }}</div>
-      <div class="stat-sub">{{ completedTasks() }} completed, {{ pendingTasks() }} pending</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">COMPLETION RATE</div>
-      <div class="stat-val text-amber">{{ completionPercentage() }}<span class="pct">%</span></div>
-      <div class="stat-sub">of all tasks</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">HABIT CHECKS</div>
-      <div class="stat-val text-blue">{{ totalHabitChecks() }}</div>
-      <div class="stat-sub">across {{ totalHabits() }} habits</div>
-    </div>
-  </div>
+<div class="stats-page">
+  <div class="stats-inner">
 
-  <div class="glass-card mb-4">
-    <h3 class="mb-3">Tasks by Category</h3>
-    <div class="tag-stats">
-      @for (tagStat of tasksByTag(); track tagStat.tag) {
-        <div class="tag-stat-item">
-          <span class="tag-name" [ngClass]="'tag-' + tagStat.tag">{{ tagStat.tag | titlecase }}</span>
-          <span class="tag-count">{{ tagStat.count }} total ({{ tagStat.completed }} done)</span>
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="tagStat.count > 0 ? (tagStat.completed / tagStat.count) * 100 : 0"></div>
+    <div class="page-header">
+      <div class="file-comment">// statistics.log — Progress metrics &amp; activity trace</div>
+      <h2 class="page-title">Your Progress Statistics</h2>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">TOTAL_TASKS</div>
+        <div class="stat-val text-green">{{ totalTasks() }}</div>
+        <div class="stat-sub">{{ completedTasks() }} completed, {{ pendingTasks() }} pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">COMPLETION_%</div>
+        <div class="stat-val text-amber">{{ completionPercentage() }}<span class="pct">%</span></div>
+        <div class="stat-sub">of all tasks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">HABIT_CHECKS</div>
+        <div class="stat-val text-blue">{{ totalHabitChecks() }}</div>
+        <div class="stat-sub">across {{ totalHabits() }} habits</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">~/workspace/tasks-by-category.stats</div>
+      <div class="panel-body">
+        <div class="tag-stats">
+          @for (tagStat of tasksByTag(); track tagStat.tag) {
+            <div class="tag-stat-item">
+              <span class="tag-chip" [ngClass]="'tag-' + tagStat.tag">
+                <span class="tag-name">{{ tagStat.tag }}</span>
+              </span>
+              <span class="tag-count">{{ tagStat.count }} total <span class="muted">({{ tagStat.completed }} done)</span></span>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="tagStat.count > 0 ? (tagStat.completed / tagStat.count) * 100 : 0"></div>
+              </div>
+              <span class="tag-pct">{{ tagStat.count > 0 ? ((tagStat.completed / tagStat.count) * 100 | number:'1.0-0') : 0 }}%</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">~/workspace/system.log</div>
+      <div class="panel-body log-window">
+        @for (log of state.logs().slice(0, 20); track log.id) {
+          <div class="log-row fade-in">
+            <span class="log-time">[{{ log.time }}]</span>
+            <span class="log-arrow">&gt;</span>
+            <span class="log-msg">{{ log.action }}</span>
           </div>
-        </div>
-      }
+        }
+        @if (state.logs().length === 0) {
+          <div class="log-row text-muted">// No recent activity</div>
+        }
+      </div>
     </div>
-  </div>
 
-  <div class="glass-card">
-    <h3 class="mb-3">Recent Activity</h3>
-    <div class="log-window">
-      @for (log of state.logs().slice(0, 20); track log.id) {
-        <div class="log-row">
-          <span class="log-time">[{{ log.time }}]</span>
-          <span class="log-arrow">&gt;</span>
-          <span class="log-msg">{{ log.action }}</span>
-        </div>
-      }
-      @if (state.logs().length === 0) {
-        <div class="log-row text-muted">// No recent activity</div>
-      }
-    </div>
   </div>
 </div>

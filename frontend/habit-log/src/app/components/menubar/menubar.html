@@ -1,0 +1,90 @@
+<div class="menubar" (mouseleave)="close()">
+  <div class="menubar-inner">
+
+    <!-- FILE -->
+    <div class="menu-item" [class.open]="openMenu() === 'FILE'"
+         (click)="toggle('FILE', $event)" (mouseenter)="hover('FILE')">
+      <span class="menu-hot">F</span>ile
+      @if (openMenu() === 'FILE') {
+      <div class="menu-drop" (click)="$event.stopPropagation()">
+        <div class="menu-row" (click)="newTask()"><span>New Task…</span><span class="menu-hint">F2</span></div>
+        <div class="menu-sep">────────────────</div>
+        <div class="menu-row" (click)="doLogout()"><span>Logout</span><span class="menu-hint">Alt+X</span></div>
+      </div>
+      }
+    </div>
+
+    <!-- EDIT -->
+    <div class="menu-item" [class.open]="openMenu() === 'EDIT'"
+         (click)="toggle('EDIT', $event)" (mouseenter)="hover('EDIT')">
+      <span class="menu-hot">E</span>dit
+      @if (openMenu() === 'EDIT') {
+      <div class="menu-drop" (click)="$event.stopPropagation()">
+        <div class="menu-row" (click)="markDone()"><span>Toggle Done</span><span class="menu-hint">F3</span></div>
+        <div class="menu-row" (click)="deleteCurrent()"><span>Delete Task</span><span class="menu-hint">F8</span></div>
+      </div>
+      }
+    </div>
+
+    <!-- VIEW -->
+    <div class="menu-item" [class.open]="openMenu() === 'VIEW'"
+         (click)="toggle('VIEW', $event)" (mouseenter)="hover('VIEW')">
+      <span class="menu-hot">V</span>iew
+      @if (openMenu() === 'VIEW') {
+      <div class="menu-drop" (click)="$event.stopPropagation()">
+        <div class="menu-row" (click)="goto('/dashboard')"><span>Dashboard</span></div>
+        <div class="menu-row" (click)="goto('/statistics')"><span>Statistics</span></div>
+        <div class="menu-row" (click)="goto('/profile')"><span>Profile</span></div>
+      </div>
+      }
+    </div>
+
+    <!-- OPTIONS -->
+    <div class="menu-item" [class.open]="openMenu() === 'OPT'"
+         (click)="toggle('OPT', $event)" (mouseenter)="hover('OPT')">
+      <span class="menu-hot">O</span>ptions
+      @if (openMenu() === 'OPT') {
+      <div class="menu-drop wide" (click)="$event.stopPropagation()">
+        <div class="menu-label">Theme</div>
+        @for (t of theme.themes; track t.id) {
+        <div class="menu-row" (click)="setTheme(t.id)">
+          <span>{{ theme.current() === t.id ? '• ' : '&nbsp;&nbsp;' }}{{ t.name }}</span>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- HELP -->
+    <div class="menu-item" [class.open]="openMenu() === 'HELP'"
+         (click)="toggle('HELP', $event)" (mouseenter)="hover('HELP')">
+      <span class="menu-hot">H</span>elp
+      @if (openMenu() === 'HELP') {
+      <div class="menu-drop" (click)="$event.stopPropagation()">
+        <div class="menu-row" (click)="showAbout()"><span>About HabitLog…</span></div>
+      </div>
+      }
+    </div>
+
+    <div class="menubar-right">HABITLOG.IDE — TASKS.LST</div>
+  </div>
+</div>
+
+@if (aboutOpen()) {
+<div class="dialog-veil" (click)="aboutOpen.set(false)">
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dlg-title">──[ ABOUT ]─────────────────────</div>
+    <div class="dlg-body">
+      <pre class="about-logo">
+ ╦ ╦┌─┐┌┐ ┬┌┬┐╦  ┌─┐┌─┐
+ ╠═╣├─┤├┴┐│ │ ║  │ ││ ┬
+ ╩ ╩┴ ┴└─┘┴ ┴ ╩═╝└─┘└─┘</pre>
+      <div class="about-meta">HabitLog.IDE v1.0</div>
+      <div class="about-meta dim">// track your habits &amp; tasks, DOS-style</div>
+    </div>
+    <div class="dlg-btns">
+      <button class="dlg-btn" (click)="aboutOpen.set(false)">&lt; OK &gt;</button>
+    </div>
+  </div>
+</div>
+}

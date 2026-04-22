@@ -1,13 +1,17 @@
-<nav class="glass-nav">
-  <div class="container d-flex justify-between align-center" style="height: 60px;">
-    <a routerLink="/" class="text-primary"
-      style="font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px;">HabitLog</a>
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a routerLink="/" class="brand">
+      <span class="brand-bracket">&lt;</span>
+      <span class="brand-name">HabitLog</span>
+      <span class="brand-cursor">_</span>
+      <span class="brand-bracket">/&gt;</span>
+    </a>
 
-    <div class="d-flex align-center gap-4">
+    <div class="nav-right">
       @if (auth.currentUser()) {
       <div class="dropdown-container">
         <button class="avatar-btn" (click)="toggleDropdown($event)">
-          {{ auth.currentUser()?.username?.[0] | uppercase }}
+          <span class="avatar-initial">{{ auth.currentUser()?.username?.[0] | uppercase }}</span>
         </button>
 
         <div class="dropdown-menu" [ngClass]="{'show': isDropdownOpen()}">
@@ -18,14 +22,14 @@
 
           <a routerLink="/dashboard" class="dropdown-item" (click)="closeDropdown()">📋 Dashboard</a>
           <a routerLink="/statistics" class="dropdown-item" (click)="closeDropdown()">📊 Statistics</a>
-          <a routerLink="/profile" class="dropdown-item" (click)="closeDropdown()">⚙️ Settings & Profile</a>
+          <a routerLink="/profile" class="dropdown-item" (click)="closeDropdown()">⚙️ Settings &amp; Profile</a>
 
           <div class="dropdown-divider"></div>
           <button class="dropdown-item text-danger" (click)="logout()">🚪 Logout</button>
         </div>
       </div>
       } @else {
-      <a routerLink="/login" class="btn btn-primary" style="padding: 0.4rem 1rem;">Login</a>
+      <a routerLink="/login" class="login-btn">Login</a>
       }
     </div>
   </div>

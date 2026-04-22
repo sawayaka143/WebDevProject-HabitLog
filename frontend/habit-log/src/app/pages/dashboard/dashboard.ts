@@ -5,6 +5,7 @@ import { TaskEditorComponent } from '../../components/task-editor/task-editor';
 import { HabitsTabComponent } from '../../components/habits-tab/habits-tab';
 import { DashboardTabComponent } from '../../components/dashboard-tab/dashboard-tab';
 import { TerminalComponent } from '../../components/terminal/terminal';
+import { MenubarComponent } from '../../components/menubar/menubar';
 import { IdeStateService } from '../../services/ide-state.service';
 
 @Component({
@@ -16,7 +17,8 @@ import { IdeStateService } from '../../services/ide-state.service';
     TaskEditorComponent,
     HabitsTabComponent,
     DashboardTabComponent,
-    TerminalComponent
+    TerminalComponent,
+    MenubarComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
