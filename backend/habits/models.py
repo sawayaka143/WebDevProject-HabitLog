@@ -3,6 +3,14 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class TaskManager(models.Manager):
+    def completed(self):
+        return self.filter(status='done')
+
+    def pending(self):
+        return self.filter(status='pending')
+
+
 class Task(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -14,6 +22,8 @@ class Task(models.Model):
         ('personal', 'Personal'),
         ('health', 'Health'),
     ]
+
+    objects = TaskManager()
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
@@ -49,3 +59,13 @@ class LogEntry(models.Model):
 
     def __str__(self):
         return self.action
+
+
+class Reminder(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reminders')
+    habit = models.ForeignKey(Habit, on_delete=models.CASCADE, related_name='reminders')
+    message = models.CharField(max_length=255)
+    reminder_time = models.DateTimeField()
+
+    def __str__(self):
+        return f"Reminder for {self.habit.name}: {self.message}"

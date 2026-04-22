@@ -3,6 +3,7 @@ import { SidebarComponent } from '../../components/sidebar/sidebar';
 import { TabBarComponent } from '../../components/tab-bar/tab-bar';
 import { TaskEditorComponent } from '../../components/task-editor/task-editor';
 import { HabitsTabComponent } from '../../components/habits-tab/habits-tab';
+import { RemindersTabComponent } from '../../components/reminders-tab/reminders-tab';
 import { DashboardTabComponent } from '../../components/dashboard-tab/dashboard-tab';
 import { TerminalComponent } from '../../components/terminal/terminal';
 import { MenubarComponent } from '../../components/menubar/menubar';
@@ -16,6 +17,7 @@ import { IdeStateService } from '../../services/ide-state.service';
     TabBarComponent,
     TaskEditorComponent,
     HabitsTabComponent,
+    RemindersTabComponent,
     DashboardTabComponent,
     TerminalComponent,
     MenubarComponent

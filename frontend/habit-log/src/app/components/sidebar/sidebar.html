@@ -54,6 +54,21 @@
   </div>
   }
 
+  <!-- reminders/ folder -->
+  <div class="folder-row">
+    <span class="arrow">▾</span>
+    <span class="folder-icon">📁</span>
+    <span class="folder-name">reminders</span>
+    <span class="file-count">{{ state.totalReminders() }}</span>
+  </div>
+
+  <div class="file-row" [class.active]="state.activeTabId() === 'reminders.r'" [class.open]="state.isTabOpen('reminders.r')"
+    (click)="openReminders()">
+    <span class="file-indent"></span>
+    <span class="file-type-icon r-icon">R</span>
+    <span class="file-name">reminders.r</span>
+  </div>
+
   <!-- pages/ folder -->
   <div class="folder-row">
     <span class="arrow">▾</span>

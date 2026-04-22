@@ -1,3 +1,4 @@
+import logging
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -7,15 +8,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Task, Habit, LogEntry
+from .models import Task, Habit, LogEntry, Reminder
 from .serializers import (
     LoginSerializer,
-    RegisterSerializer,
     UserSerializer,
     ProfileUpdateSerializer,
+    PasswordChangeSerializer,
     TaskSerializer,
     HabitSerializer,
     LogEntrySerializer,
+    ReminderSerializer,
 )
 
 
@@ -31,6 +33,11 @@ def login_view(request):
 
     username = serializer.validated_data['username']
     password = serializer.validated_data['password']
+
+    # log attempt (do not log passwords)
+    logger = logging.getLogger(__name__)
+    remote = request.META.get('REMOTE_ADDR')
+    logger.info(f"Login attempt for username='{username}' from {remote}")
 
     user = authenticate(username=username, password=password)
     if not user:
@@ -63,6 +70,23 @@ class ProfileAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(UserSerializer(request.user).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordChangeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = PasswordChangeSerializer(data=request.data)
+        if serializer.is_valid():
+            old_password = serializer.validated_data['old_password']
+            new_password = serializer.validated_data['new_password']
+            if not request.user.check_password(old_password):
+                return Response({'detail': 'Old password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+            request.user.set_password(new_password)
+            request.user.save()
+            create_log(request.user, '[USER] PASSWORD CHANGED')
+            return Response({'detail': 'Password changed successfully'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -224,3 +248,52 @@ class LogListAPIView(APIView):
         logs = LogEntry.objects.filter(user=request.user).order_by('-time')[:50]
         serializer = LogEntrySerializer(logs, many=True)
         return Response(serializer.data)
+
+
+class ReminderListCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        reminders = Reminder.objects.filter(user=request.user).order_by('reminder_time')
+        serializer = ReminderSerializer(reminders, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ReminderSerializer(data=request.data)
+        if serializer.is_valid():
+            reminder = serializer.save(user=request.user)
+            create_log(request.user, f'[REMINDER] CREATE: {reminder.message}')
+            return Response(ReminderSerializer(reminder).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReminderDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, request, pk):
+        try:
+            return Reminder.objects.get(pk=pk, user=request.user)
+        except Reminder.DoesNotExist:
+            return None
+
+    def patch(self, request, pk):
+        reminder = self.get_object(request, pk)
+        if not reminder:
+            return Response({'detail': 'Reminder not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ReminderSerializer(reminder, data=request.data, partial=True)
+        if serializer.is_valid():
+            updated_reminder = serializer.save()
+            create_log(request.user, f'[REMINDER] UPDATE: {updated_reminder.message}')
+            return Response(ReminderSerializer(updated_reminder).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        reminder = self.get_object(request, pk)
+        if not reminder:
+            return Response({'detail': 'Reminder not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        message = reminder.message
+        reminder.delete()
+        create_log(request.user, f'[REMINDER] DELETE: {message}')
+        return Response(status=status.HTTP_204_NO_CONTENT)

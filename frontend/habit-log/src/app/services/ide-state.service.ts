@@ -20,6 +20,13 @@ export interface Habit {
   days: boolean[]; // [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
 }
 
+export interface Reminder {
+  id: string;
+  habit: string; // habit id
+  message: string;
+  reminder_time: string; // ISO datetime string
+}
+
 export interface LogEntry {
   time: string;
   action: string;
@@ -32,9 +39,9 @@ export interface TerminalLine {
 }
 
 export interface OpenTab {
-  id: string;       // unique key: filename for tasks, 'habits.h', 'dashboard.log'
+  id: string;       // unique key: filename for tasks, 'habits.h', 'dashboard.log', 'reminders.r'
   label: string;    // display name
-  type: 'task' | 'habits' | 'dashboard';
+  type: 'task' | 'habits' | 'dashboard' | 'reminders';
 }
 
 function toSnakeCase(text: string): string {
@@ -88,6 +95,9 @@ export class IdeStateService {
     { id: '2', name: 'gym_session', days: [false, false, true, false, false, false, false] },
   ]);
 
+  // ───────── REMINDERS ─────────
+  reminders = signal<Reminder[]>([]);
+
   // ───────── LOGS ─────────
   logs = signal<LogEntry[]>([
     { id: 1, time: new Date().toLocaleTimeString(), action: 'SYSTEM_BOOT' },
@@ -121,11 +131,13 @@ export class IdeStateService {
   totalTodos = computed(() => this.tasks().length);
   completedTodos = computed(() => this.tasks().filter(t => t.status === 'done').length);
   totalHabits = computed(() => this.habits().length);
+  totalReminders = computed(() => this.reminders().length);
 
   constructor(private http: HttpClient) {
     if (typeof window !== 'undefined' && this.hasToken()) {
       this.loadTasks();
       this.loadHabits();
+      this.loadReminders();
       this.loadLogs();
     }
   }
@@ -133,6 +145,7 @@ export class IdeStateService {
   initializeAfterLogin() {
     this.loadTasks();
     this.loadHabits();
+    this.loadReminders();
     this.loadLogs();
   }
 
@@ -170,6 +183,19 @@ export class IdeStateService {
         id: String(h.id)
       }))),
       error: (err) => console.error('Load habits error', err)
+    });
+  }
+
+  private loadReminders() {
+    this.http.get<Reminder[]>(`${this.apiUrl}/reminders/`, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (data) => this.reminders.set(data.map(r => ({
+        ...r,
+        id: String(r.id),
+        habit: String(r.habit)
+      }))),
+      error: (err) => console.error('Load reminders error', err)
     });
   }
 
@@ -378,6 +404,72 @@ export class IdeStateService {
         this.loadLogs();
       },
       error: (err) => console.error('Toggle habit error', err)
+    });
+  }
+
+  // ───────── REMINDER ACTIONS ─────────
+  addReminder(habitId: string, message: string, reminderTime: string) {
+    const optimisticReminder: Reminder = {
+      id: `temp-${Date.now()}`,
+      habit: habitId,
+      message,
+      reminder_time: reminderTime
+    };
+
+    this.reminders.update(r => [...r, optimisticReminder]);
+
+    this.http.post<Reminder>(`${this.apiUrl}/reminders/`, {
+      habit: habitId,
+      message,
+      reminder_time: reminderTime
+    }, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (newReminder) => {
+        this.reminders.update(r =>
+          r.map(reminder => reminder.id === optimisticReminder.id ? { ...newReminder, id: String(newReminder.id), habit: String(newReminder.habit) } : reminder)
+        );
+        this.loadLogs();
+      },
+      error: (err) => {
+        console.error('Add reminder error', err);
+        this.reminders.update(r => r.filter(reminder => reminder.id !== optimisticReminder.id));
+      }
+    });
+  }
+
+  updateReminder(reminderId: string, updates: Partial<Reminder>) {
+    const original = this.reminders().find(r => r.id === reminderId);
+    if (!original) return;
+
+    this.reminders.update(r =>
+      r.map(reminder => reminder.id === reminderId ? { ...reminder, ...updates } : reminder)
+    );
+
+    this.http.patch<Reminder>(`${this.apiUrl}/reminders/${reminderId}/`, updates, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: (updatedReminder) => {
+        this.reminders.update(r =>
+          r.map(reminder => reminder.id === reminderId ? { ...updatedReminder, id: String(updatedReminder.id), habit: String(updatedReminder.habit) } : reminder)
+        );
+        this.loadLogs();
+      },
+      error: (err) => {
+        console.error('Update reminder error', err);
+        this.reminders.update(r => r.map(reminder => reminder.id === reminderId ? original : reminder));
+      }
+    });
+  }
+
+  deleteReminder(reminderId: string) {
+    this.reminders.update(r => r.filter(reminder => reminder.id !== reminderId));
+
+    this.http.delete(`${this.apiUrl}/reminders/${reminderId}/`, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: () => this.loadLogs(),
+      error: (err) => console.error('Delete reminder error', err)
     });
   }
 

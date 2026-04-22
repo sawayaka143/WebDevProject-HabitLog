@@ -15,6 +15,7 @@ export class TabBarComponent {
   getIconClass(tab: OpenTab): string {
     if (tab.type === 'task')      return 'icon-task';
     if (tab.type === 'habits')    return 'icon-h';
+    if (tab.type === 'reminders') return 'icon-r';
     if (tab.type === 'dashboard') return 'icon-log';
     return '';
   }
@@ -22,6 +23,7 @@ export class TabBarComponent {
   getIconLabel(tab: OpenTab): string {
     if (tab.type === 'task')      return 'T';
     if (tab.type === 'habits')    return 'H';
+    if (tab.type === 'reminders') return 'R';
     if (tab.type === 'dashboard') return 'LOG';
     return '?';
   }

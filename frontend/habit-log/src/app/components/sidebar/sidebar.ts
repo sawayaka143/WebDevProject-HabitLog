@@ -22,6 +22,10 @@ export class SidebarComponent {
     this.state.openTab({ id: 'habits.h', label: 'habits.h', type: 'habits' });
   }
 
+  openReminders() {
+    this.state.openTab({ id: 'reminders.r', label: 'reminders.r', type: 'reminders' });
+  }
+
   openDashboard() {
     this.state.openTab({ id: 'dashboard.log', label: 'dashboard.log', type: 'dashboard' });
   }

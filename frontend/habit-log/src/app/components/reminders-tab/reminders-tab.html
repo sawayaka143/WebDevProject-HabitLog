@@ -1,0 +1,53 @@
+<div class="reminders-container">
+  <h2>Reminders</h2>
+
+  <!-- Add New Reminder -->
+  <div class="add-reminder">
+    <h3>Add New Reminder</h3>
+    <form (ngSubmit)="addReminder()" #reminderForm="ngForm">
+      <div class="form-group">
+        <label for="habit">Habit:</label>
+        <select id="habit" [(ngModel)]="newReminder.habit" name="habit" required>
+          <option value="">Select a habit</option>
+          <option *ngFor="let habit of state.habits()" [value]="habit.id">
+            {{ habit.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message:</label>
+        <input type="text" id="message" [(ngModel)]="newReminder.message" name="message" placeholder="Reminder message" required>
+      </div>
+
+      <div class="form-group">
+        <label for="reminder_time">Reminder Time:</label>
+        <input type="datetime-local" id="reminder_time" [(ngModel)]="newReminder.reminder_time" name="reminder_time" required>
+      </div>
+
+      <button type="submit" [disabled]="!reminderForm.form.valid">Add Reminder</button>
+    </form>
+  </div>
+
+  <!-- Reminders List -->
+  <div class="reminders-list">
+    <h3>Your Reminders ({{ state.totalReminders() }})</h3>
+    <div *ngIf="state.reminders().length === 0" class="no-reminders">
+      No reminders yet. Create your first reminder above!
+    </div>
+    <div *ngFor="let reminder of state.reminders()" class="reminder-item">
+      <div class="reminder-header">
+        <strong>{{ reminder.message }}</strong>
+        <button (click)="deleteReminder(reminder.id)" class="delete-btn">×</button>
+      </div>
+      <div class="reminder-details">
+        <span class="habit-name">Habit: {{ getHabitName(reminder.habit) }}</span>
+        <span class="reminder-time">Time: {{ formatDateTime(reminder.reminder_time) }}</span>
+      </div>
+      <div class="reminder-edit">
+        <input type="text" [value]="reminder.message" (blur)="updateReminder(reminder, 'message', $event.target.value)" placeholder="Message">
+        <input type="datetime-local" [value]="reminder.reminder_time" (blur)="updateReminder(reminder, 'reminder_time', $event.target.value)">
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Task, Habit, LogEntry
-
+from .models import Task, Habit, LogEntry, Reminder
+from django.utils import timezone
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,26 +14,16 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        return user
-
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email']
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -56,4 +46,11 @@ class LogEntrySerializer(serializers.ModelSerializer):
         fields = ['id', 'time', 'action']
 
     def get_time(self, obj):
-        return obj.time.strftime('%H:%M:%S')
+        local_time = timezone.localtime(obj.time)
+        return local_time.strftime('%H:%M:%S')
+
+
+class ReminderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reminder
+        fields = ['id', 'habit', 'message', 'reminder_time']

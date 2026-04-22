@@ -32,6 +32,7 @@
       @switch (activeTabType()) {
         @case ('task')      { <app-task-editor class="fill"></app-task-editor> }
         @case ('habits')    { <div class="editor-content-wrap"><app-habits-tab></app-habits-tab></div> }
+        @case ('reminders') { <div class="editor-content-wrap"><app-reminders-tab></app-reminders-tab></div> }
         @case ('dashboard') { <div class="editor-content-wrap"><app-dashboard-tab></app-dashboard-tab></div> }
         @default {
           <div class="welcome-screen">

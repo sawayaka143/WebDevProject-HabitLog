@@ -22,6 +22,11 @@ export class Profile {
     username: [this.authService.currentUser()?.username || '', Validators.required]
   });
 
+  passwordForm = this.fb.group({
+    old_password: ['', Validators.required],
+    new_password: ['', [Validators.required, Validators.minLength(6)]]
+  });
+
   updateProfile() {
     if (this.profileForm.valid) {
       const updates = {
@@ -38,6 +43,25 @@ export class Profile {
         error: (err) => {
           console.error('Update profile error', err);
           this.savedMessage = 'Failed to update profile.';
+          setTimeout(() => this.savedMessage = '', 3000);
+        }
+      });
+    }
+  }
+
+  changePassword() {
+    if (this.passwordForm.valid) {
+      const { old_password, new_password } = this.passwordForm.value;
+
+      this.authService.changePassword(old_password!, new_password!).subscribe({
+        next: () => {
+          this.savedMessage = 'Password changed successfully!';
+          this.passwordForm.reset();
+          setTimeout(() => this.savedMessage = '', 3000);
+        },
+        error: (err) => {
+          console.error('Change password error', err);
+          this.savedMessage = 'Failed to change password. Check your old password.';
           setTimeout(() => this.savedMessage = '', 3000);
         }
       });
