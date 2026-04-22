@@ -19,6 +19,12 @@
 
   --border-color: #30363d;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* chrome = grey DOS bars (menubar, dialog title). Always has strong contrast text. */
+  --chrome-bg:  #21262d;
+  --chrome-ink: #c9d1d9;
+  --chrome-accent-bg:  #ffb347;
+  --chrome-accent-ink: #0d1117;
 }
 
 *, *::before, *::after {
@@ -36,6 +42,84 @@ html, body {
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.6;
+}
+
+/* ── Themes (from TASK.IDE, 1991) ─────────────────────────── */
+html[data-theme="borland"] {
+  --bg-primary:     #0000a8;
+  --bg-secondary:   #0000a8;
+  --bg-tertiary:    #a8a8a8;
+  --bg-hover:       #1616c0;
+  --text-primary:   #a8a8a8;
+  --text-secondary: #a8a8a8;
+  --text-muted:     #5454fc;
+  --accent-green:   #fcfc54;
+  --accent-amber:   #fcfc54;
+  --accent-blue:    #54fcfc;
+  --accent-purple:  #fc54fc;
+  --accent-red:     #fc5454;
+  --border-color:   #a8a8a8;
+  --chrome-bg:      #a8a8a8;
+  --chrome-ink:     #000000;
+  --chrome-accent-bg:  #000000;
+  --chrome-accent-ink: #fcfc54;
+}
+html[data-theme="amber"] {
+  --bg-primary:     #1a0e00;
+  --bg-secondary:   #1a0e00;
+  --bg-tertiary:    #3a2100;
+  --bg-hover:       #2a1600;
+  --text-primary:   #ffb64b;
+  --text-secondary: #ffb64b;
+  --text-muted:     #8a5a0c;
+  --accent-green:   #ffb64b;
+  --accent-amber:   #ffe2a8;
+  --accent-blue:    #ffe2a8;
+  --accent-purple:  #ffe2a8;
+  --accent-red:     #ff7a3a;
+  --border-color:   #7a4a00;
+  --chrome-bg:      #3a2100;
+  --chrome-ink:     #ffb64b;
+  --chrome-accent-bg:  #ffe2a8;
+  --chrome-accent-ink: #1a0e00;
+}
+html[data-theme="phosphor"] {
+  --bg-primary:     #001400;
+  --bg-secondary:   #001400;
+  --bg-tertiary:    #003300;
+  --bg-hover:       #002200;
+  --text-primary:   #33ff66;
+  --text-secondary: #33ff66;
+  --text-muted:     #139a40;
+  --accent-green:   #33ff66;
+  --accent-amber:   #b0ffb0;
+  --accent-blue:    #33ff66;
+  --accent-purple:  #b0ffb0;
+  --accent-red:     #ff6b6b;
+  --border-color:   #0a6e2a;
+  --chrome-bg:      #003300;
+  --chrome-ink:     #33ff66;
+  --chrome-accent-bg:  #b0ffb0;
+  --chrome-accent-ink: #001400;
+}
+html[data-theme="norton"] {
+  --bg-primary:     #1c1c1c;
+  --bg-secondary:   #1c1c1c;
+  --bg-tertiary:    #2a2a2a;
+  --bg-hover:       #3a3a3a;
+  --text-primary:   #c0c0c0;
+  --text-secondary: #c0c0c0;
+  --text-muted:     #808080;
+  --accent-green:   #54fc54;
+  --accent-amber:   #fcfc54;
+  --accent-blue:    #ffffff;
+  --accent-purple:  #ffffff;
+  --accent-red:     #fc5454;
+  --border-color:   #808080;
+  --chrome-bg:      #c0c0c0;
+  --chrome-ink:     #000000;
+  --chrome-accent-bg:  #000080;
+  --chrome-accent-ink: #ffffff;
 }
 
 /* ── Custom Scrollbar ── */
